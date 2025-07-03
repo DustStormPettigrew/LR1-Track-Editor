@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
@@ -34,12 +34,12 @@
             }
         }
 
-        public void Draw(Game1 game, BasicEffect basicEffect)
+        public void Draw(GameView game, BasicEffect basicEffect)
         {
             this.Draw(game, basicEffect, Matrix.Identity, null);
         }
 
-        public void Draw(Game1 game, BasicEffect basicEffect, Matrix transform, Material mat = null)
+        public void Draw(GameView game, BasicEffect basicEffect, Matrix transform, Material mat = null)
         {
             basicEffect.World = Matrix.CreateScale(this.scale) * transform;
             basicEffect.VertexColorEnabled = !this.normals && game.doVertexColors;
@@ -57,7 +57,7 @@
                     ModelPart current = enumerator.Current;
                     if (current.visible)
                     {
-                        if (!ReferenceEquals(mat, null))
+                        if (mat is object)
                         {
                             if ((mat.texture == null) || !game.doTextures)
                             {
@@ -68,7 +68,7 @@
                                 basicEffect.TextureEnabled = true;
                                 basicEffect.Texture = mat.texture;
                             }
-                            basicEffect.Alpha = ((float) mat.alpha) / 255f;
+                            basicEffect.Alpha = ((float)mat.alpha) / 255f;
                             basicEffect.AmbientLightColor = Utils.vectorfromcolor(mat.ambientcolor);
                         }
                         else if ((current.material == null) || !game.materials.ContainsKey(current.material))
@@ -89,7 +89,7 @@
                                 basicEffect.TextureEnabled = true;
                                 basicEffect.Texture = game.materials[current.material].texture;
                             }
-                            basicEffect.Alpha = ((float) game.materials[current.material].alpha) / 255f;
+                            basicEffect.Alpha = ((float)game.materials[current.material].alpha) / 255f;
                             basicEffect.AmbientLightColor = Utils.vectorfromcolor(game.materials[current.material].ambientcolor);
                         }
                         using (List<EffectPass>.Enumerator enumerator2 = basicEffect.CurrentTechnique.Passes.GetEnumerator())
@@ -110,7 +110,7 @@
             basicEffect.World = Matrix.Identity;
         }
 
-        public void DrawBoundingBox(Game1 game, BasicEffect basicEffect, Matrix transform)
+        public void DrawBoundingBox(GameView game, BasicEffect basicEffect, Matrix transform)
         {
             basicEffect.TextureEnabled = false;
             basicEffect.VertexColorEnabled = true;
@@ -148,7 +148,7 @@
             }
         }
 
-        public void DrawMultiple(Game1 game, BasicEffect basicEffect, Matrix[] transforms, Material[] mats = null)
+        public void DrawMultiple(GameView game, BasicEffect basicEffect, Matrix[] transforms, Material[] mats = null)
         {
             game.GraphicsDevice.Indices = this.indexbuffer;
             game.GraphicsDevice.SetVertexBuffer(this.vertexbuffer);
@@ -183,7 +183,7 @@
                                 basicEffect.TextureEnabled = true;
                                 basicEffect.Texture = mats[index].texture;
                             }
-                            basicEffect.Alpha = ((float) mats[index].alpha) / 255f;
+                            basicEffect.Alpha = ((float)mats[index].alpha) / 255f;
                             basicEffect.AmbientLightColor = Utils.vectorfromcolor(mats[index].ambientcolor);
                         }
                         else if ((current.material == null) || !game.materials.ContainsKey(current.material))
@@ -204,7 +204,7 @@
                                 basicEffect.TextureEnabled = true;
                                 basicEffect.Texture = game.materials[current.material].texture;
                             }
-                            basicEffect.Alpha = ((float) game.materials[current.material].alpha) / 255f;
+                            basicEffect.Alpha = ((float)game.materials[current.material].alpha) / 255f;
                             basicEffect.AmbientLightColor = Utils.vectorfromcolor(game.materials[current.material].ambientcolor);
                         }
                         using (List<EffectPass>.Enumerator enumerator2 = basicEffect.CurrentTechnique.Passes.GetEnumerator())
@@ -356,7 +356,7 @@
             return list;
         }
 
-        public VertexDeclaration getVertexDeclaration() => 
+        public VertexDeclaration getVertexDeclaration() =>
             !this.normals ? VertexPTC.VertexDeclaration : VertexPTN.VertexDeclaration;
     }
 }

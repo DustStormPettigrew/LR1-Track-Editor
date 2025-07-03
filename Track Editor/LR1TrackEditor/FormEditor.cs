@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1;
     using LibLR1.Utils;
@@ -16,32 +16,32 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
-    public class Form1 : Form
+    public class FormEditor : Form
     {
-        private Game1 game;
+        private readonly GameView game;
         private FormWindowState previousstate = FormWindowState.Normal;
-        private float currentDPI;
-        private List<string> edits = new List<string>();
-        private static CultureInfo ci = CultureInfo.InvariantCulture;
+        private readonly float currentDPI;
+        private readonly List<string> edits = new List<string>();
+        private static readonly CultureInfo ci = CultureInfo.InvariantCulture;
         private IContainer components = null;
         private PictureBox pictureBox1;
         private MenuStrip menuStrip1;
         private Button button1;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem viewToolStripMenuItem;
-        private ToolStripMenuItem texturesToolStripMenuItem;
-        private ToolStripMenuItem vertexColorsToolStripMenuItem;
-        private ToolStripMenuItem powerupBricksToolStripMenuItem;
-        private ToolStripMenuItem staticObjectsToolStripMenuItem;
-        private ToolStripMenuItem openToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private ToolStripMenuItem skyboxToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem tsmiFile;
+        private ToolStripMenuItem tsmiEdit;
+        private ToolStripMenuItem tsmiView;
+        private ToolStripMenuItem tsmiTextures;
+        private ToolStripMenuItem tsmiVertexColors;
+        private ToolStripMenuItem tsmiPowerupBricks;
+        private ToolStripMenuItem tsmiStaticObjects;
+        private ToolStripMenuItem tsmiOpen;
+        private ToolStripMenuItem tsmiOptions;
+        private ToolStripMenuItem tsmiAbout;
+        private ToolStripMenuItem tsmiSkybox;
+        private ToolStripSeparator tssView1;
         private TabControl tabControl1;
-        private TabPage tabPageSKB;
-        private TabPage tabPagePWB;
+        private TabPage tpSKB;
+        private TabPage tpPWB;
         private TabPage tabPage3;
         private TabPage tabPage4;
         private Label label2;
@@ -90,17 +90,17 @@
         private Panel panel1;
         private TextBox SkyboxIntBox;
         private CheckBox SkyboxIntCheckbox;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem saveToolStripMenuItem;
-        private ToolStripMenuItem saveSkyboxToolStripMenuItem;
-        private ToolStripMenuItem savePowerupsToolStripMenuItem;
-        private ToolStripMenuItem saveObjectsToolStripMenuItem;
-        private ToolStripMenuItem saveAsToolStripMenuItem;
-        private ToolStripMenuItem saveSkyboxAsToolStripMenuItem;
-        private ToolStripMenuItem savePowerupsAsToolStripMenuItem;
-        private ToolStripMenuItem saveObjectsAsToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripSeparator tssFile1;
+        private ToolStripMenuItem tsmiSave;
+        private ToolStripMenuItem tsmiSaveSkybox;
+        private ToolStripMenuItem tsmiSavePowerups;
+        private ToolStripMenuItem tsmiSaveObjects;
+        private ToolStripMenuItem tsmiSaveAs;
+        private ToolStripMenuItem tsmiSaveSkyboxAs;
+        private ToolStripMenuItem tsmiSavePowerupsAs;
+        private ToolStripMenuItem tsmiSaveObjectsAs;
+        private ToolStripSeparator tssFile2;
+        private ToolStripMenuItem tsmiExit;
         private ListBox PWBListBox;
         private Label label27;
         private Label CameraPositionLabel;
@@ -117,17 +117,17 @@
         private Button BrickplaceStopButton;
         private Label Brickplacelabel;
         private Button button3;
-        private ToolStripMenuItem reloadToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem tsmiReload;
+        private ToolStripSeparator tssFile3;
         private TabPage tabPageRRB;
-        private ToolStripMenuItem aIPathsToolStripMenuItem;
+        private ToolStripMenuItem tsmiAIPaths;
         private ListBox RRBNodeListBox;
         private Label label33;
         private Label label32;
         private ContextMenuStrip RRBListViewContextMenu;
         private ToolStripMenuItem addNewContextMenuItem;
         private ToolStripMenuItem saveContextMenuItem;
-        private ToolStripMenuItem unloadAllToolStripMenuItem;
+        private ToolStripMenuItem tsmiUnloadAll;
         private ToolStripMenuItem unloadSelectedContextMenuItem;
         private ListView RRBListView;
         private ColumnHeader columnHeader1;
@@ -140,7 +140,7 @@
         private Label rightclickmelabel;
         private ImageList imageList1;
 
-        public Form1(Game1 game)
+        public FormEditor(GameView game)
         {
             Graphics objA = base.CreateGraphics();
             try
@@ -149,7 +149,7 @@
             }
             finally
             {
-                if (!ReferenceEquals(objA, null))
+                if (objA is object)
                 {
                     objA.Dispose();
                 }
@@ -158,16 +158,16 @@
             this.ScaleControls();
             this.PWBListBox.DisplayMember = "Description";
             this.game = Utils.game = game;
-            game.form = inputhandler.form = Utils.form = this;
-            this.skyboxToolStripMenuItem.Checked = Settings.Default.doSkybox;
-            this.texturesToolStripMenuItem.Checked = Settings.Default.doTextures;
-            this.vertexColorsToolStripMenuItem.Checked = Settings.Default.doVertexColors;
-            this.powerupBricksToolStripMenuItem.Checked = Settings.Default.AutoloadPowerup;
-            this.staticObjectsToolStripMenuItem.Checked = Settings.Default.AutoloadObject;
+            game.form = InputHandler.form = Utils.form = this;
+            this.tsmiSkybox.Checked = Settings.Default.doSkybox;
+            this.tsmiTextures.Checked = Settings.Default.doTextures;
+            this.tsmiVertexColors.Checked = Settings.Default.doVertexColors;
+            this.tsmiPowerupBricks.Checked = Settings.Default.AutoloadPowerup;
+            this.tsmiStaticObjects.Checked = Settings.Default.AutoloadObject;
             base.Size = Settings.Default.FormSize;
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiAbout_Click(object sender, EventArgs e)
         {
             AboutForm objA = new AboutForm();
             try
@@ -176,7 +176,7 @@
             }
             finally
             {
-                if (!ReferenceEquals(objA, null))
+                if (objA is object)
                 {
                     objA.Dispose();
                 }
@@ -202,16 +202,16 @@
                     {
                         break;
                     }
-                    current = (Brick) enumerator.Current;
+                    current = (Brick)enumerator.Current;
                     int num3 = current.index;
                     if (current.colored)
                     {
                         num3 += this.game.pwb.ColorBricks.Count;
                     }
-                    current.Color = (string) this.BrickColorComboBox.SelectedItem;
+                    current.Color = (string)this.BrickColorComboBox.SelectedItem;
                     if (!current.colored)
                     {
-                        if (((string) this.BrickColorComboBox.SelectedItem) != "White")
+                        if (((string)this.BrickColorComboBox.SelectedItem) != "White")
                         {
                             PWB_ColorBrick item = new PWB_ColorBrick(current.Position, current.ColorByte());
                             this.game.pwb.WhiteBricks.RemoveAt(current.index - num2);
@@ -221,7 +221,7 @@
                             num2++;
                         }
                     }
-                    else if (((string) this.BrickColorComboBox.SelectedItem) != "White")
+                    else if (((string)this.BrickColorComboBox.SelectedItem) != "White")
                     {
                         this.game.pwb.ColorBricks[current.index].Color = current.ColorByte();
                     }
@@ -238,8 +238,7 @@
             }
             finally
             {
-                IDisposable objA = enumerator as IDisposable;
-                if (!ReferenceEquals(objA, null))
+                if (enumerator is IDisposable objA)
                 {
                     objA.Dispose();
                 }
@@ -306,12 +305,9 @@
         {
             if (this.PWBListBox.SelectedItems.Count == 1)
             {
-                float num;
-                float num2;
-                float num3;
-                Brick selectedItem = (Brick) this.PWBListBox.SelectedItem;
+                Brick selectedItem = (Brick)this.PWBListBox.SelectedItem;
                 NumberStyles @float = NumberStyles.Float;
-                if ((!float.TryParse(this.BrickXtextBox.Text, @float, ci, out num) || !float.TryParse(this.BrickYtextBox.Text, @float, ci, out num2)) || !float.TryParse(this.BrickZtextBox.Text, @float, ci, out num3))
+                if ((!float.TryParse(this.BrickXtextBox.Text, @float, ci, out float num) || !float.TryParse(this.BrickYtextBox.Text, @float, ci, out float num2)) || !float.TryParse(this.BrickZtextBox.Text, @float, ci, out float num3))
                 {
                     this.BrickXtextBox.Text = selectedItem.Position.X.ToString(ci);
                     this.BrickYtextBox.Text = selectedItem.Position.Y.ToString(ci);
@@ -343,7 +339,7 @@
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (ReferenceEquals(this.game.pwb, null))
+            if (this.game.pwb is null)
             {
                 MessageBox.Show("Please load a PWB file before adding new bricks.", "Error");
             }
@@ -363,7 +359,7 @@
 
         public void ClearEdits(string format = null)
         {
-            if (ReferenceEquals(format, null))
+            if (format is null)
             {
                 this.edits.Clear();
             }
@@ -376,7 +372,8 @@
         private void ColorBox_Click(object sender, EventArgs e)
         {
             PictureBox box = sender as PictureBox;
-            ColorDialog dialog = new ColorDialog {
+            ColorDialog dialog = new ColorDialog
+            {
                 AllowFullOpen = true,
                 AnyColor = true,
                 SolidColorOnly = true,
@@ -426,9 +423,8 @@
 
         private void ColorBox_Validated(object sender, EventArgs e)
         {
-            int num;
             TextBox box = sender as TextBox;
-            if (!int.TryParse(box.Text, out num))
+            if (!int.TryParse(box.Text, out int num))
             {
                 box.Text = "";
             }
@@ -471,7 +467,7 @@
                     {
                         break;
                     }
-                    Brick current = (Brick) enumerator.Current;
+                    Brick current = (Brick)enumerator.Current;
                     if (current.colored)
                     {
                         this.game.pwb.ColorBricks.RemoveAt(current.index - num2);
@@ -484,8 +480,7 @@
             }
             finally
             {
-                IDisposable objA = enumerator as IDisposable;
-                if (!ReferenceEquals(objA, null))
+                if (enumerator is IDisposable objA)
                 {
                     objA.Dispose();
                 }
@@ -506,34 +501,34 @@
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             string str = item.Checked ? "enabled" : "disabled";
-            if (sender == this.texturesToolStripMenuItem)
+            if (sender == this.tsmiTextures)
             {
                 this.game.doTextures = item.Checked;
                 Console.WriteLine("Textures " + str);
-                inputhandler.overridePressed(Microsoft.Xna.Framework.Input.Keys.T, true);
+                InputHandler.overridePressed(Microsoft.Xna.Framework.Input.Keys.T, true);
             }
-            else if (sender == this.vertexColorsToolStripMenuItem)
+            else if (sender == this.tsmiVertexColors)
             {
                 this.game.doVertexColors = item.Checked;
                 Console.WriteLine("Vertex colors " + str);
-                inputhandler.overridePressed(Microsoft.Xna.Framework.Input.Keys.V, true);
+                InputHandler.overridePressed(Microsoft.Xna.Framework.Input.Keys.V, true);
             }
-            else if (sender == this.skyboxToolStripMenuItem)
+            else if (sender == this.tsmiSkybox)
             {
                 this.game.doDrawSKB = item.Checked;
                 Console.WriteLine("Skybox " + str);
             }
-            else if (sender == this.aIPathsToolStripMenuItem)
+            else if (sender == this.tsmiAIPaths)
             {
                 this.game.doDrawRRB = item.Checked;
                 Console.WriteLine("AI paths " + str);
             }
-            else if (sender == this.powerupBricksToolStripMenuItem)
+            else if (sender == this.tsmiPowerupBricks)
             {
                 this.game.doDrawPWB = item.Checked;
                 Console.WriteLine("Powerups " + str);
             }
-            else if (sender == this.staticObjectsToolStripMenuItem)
+            else if (sender == this.tsmiStaticObjects)
             {
                 this.game.doDrawStaticObj = item.Checked;
                 Console.WriteLine("Static objects " + str);
@@ -542,7 +537,7 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!(!disposing || ReferenceEquals(this.components, null)))
+            if (!(!disposing || (this.components is null)))
             {
                 this.components.Dispose();
             }
@@ -551,51 +546,52 @@
 
         public void doTexturesChanged(bool value)
         {
-            this.texturesToolStripMenuItem.Checked = value;
+            this.tsmiTextures.Checked = value;
         }
 
         public void doVertexColorsChanged(bool value)
         {
-            this.vertexColorsToolStripMenuItem.Checked = value;
+            this.tsmiVertexColors.Checked = value;
         }
 
         private void editColorContextMenuItem_Click(object sender, EventArgs e)
         {
-            ColorDialog dialog = new ColorDialog {
+            ColorDialog dialog = new ColorDialog
+            {
                 AllowFullOpen = true,
                 AnyColor = true,
                 SolidColorOnly = true
             };
-            Microsoft.Xna.Framework.Color color = this.game.rrbs[(int) this.RRBListView.SelectedItems[0].Tag].color;
+            Microsoft.Xna.Framework.Color color = this.game.rrbs[(int)this.RRBListView.SelectedItems[0].Tag].color;
             dialog.Color = System.Drawing.Color.FromArgb(color.R, color.G, color.B);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                this.game.rrbs[(int) this.RRBListView.SelectedItems[0].Tag].color = new Microsoft.Xna.Framework.Color(dialog.Color.R, dialog.Color.G, dialog.Color.B);
-                this.game.rrbs[(int) this.RRBListView.SelectedItems[0].Tag].generatePoints();
+                this.game.rrbs[(int)this.RRBListView.SelectedItems[0].Tag].color = new Microsoft.Xna.Framework.Color(dialog.Color.R, dialog.Color.G, dialog.Color.B);
+                this.game.rrbs[(int)this.RRBListView.SelectedItems[0].Tag].generatePoints();
                 this.refreshRRB();
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiExit_Click(object sender, EventArgs e)
         {
             //null.Substring(3, 2);
             base.Close();
         }
 
-        private void Form1_DragEnter(object sender, DragEventArgs e)
+        private void FormEditor_DragEnter(object sender, DragEventArgs e)
         {
             string[] formats = e.Data.GetFormats();
-            if (e.Data.GetFormats().Contains<string>("FileNameW"))
+            if (formats.Contains<string>("FileNameW"))
             {
                 object data = e.Data.GetData("FileGroupDescriptorW");
                 if (data is string[])
                 {
-                    string[] strArray2 = (string[]) data;
+                    //string[] strArray2 = (string[])data; Removed unused variable?
                 }
             }
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void FormEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             if ((this.edits.Count > 0) && (MessageBox.Show("You have made changes in: " + string.Join(", ", this.edits) + "\nDo you want to discard these changes and exit anyway?", "Warning", MessageBoxButtons.YesNo) == DialogResult.No))
             {
@@ -609,24 +605,24 @@
             }
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
+        private void FormEditor_Resize(object sender, EventArgs e)
         {
-            if (!(((base.WindowState != FormWindowState.Maximized) || (this.previousstate != FormWindowState.Normal)) ? ((base.WindowState != FormWindowState.Normal) || (this.previousstate != FormWindowState.Maximized)) : false))
+            if (!(((base.WindowState != FormWindowState.Maximized) || (this.previousstate != FormWindowState.Normal)) && ((base.WindowState != FormWindowState.Normal) || (this.previousstate != FormWindowState.Maximized))))
             {
                 this.game.setSurface(this.getPCTHandle(), this.getPCTSize(), true);
                 this.previousstate = base.WindowState;
             }
         }
 
-        private void Form1_ResizeEnd(object sender, EventArgs e)
+        private void FormEditor_ResizeEnd(object sender, EventArgs e)
         {
             this.game.setSurface(this.getPCTHandle(), this.getPCTSize(), true);
         }
 
-        public IntPtr getPCTHandle() => 
+        public IntPtr getPCTHandle() =>
             this.pictureBox1.Handle;
 
-        public Size getPCTSize() => 
+        public Size getPCTSize() =>
             new Size(this.pictureBox1.Width - 2, this.pictureBox1.Height - 2);
 
         private void InitializeComponent()
@@ -634,35 +630,35 @@
             this.components = new Container();
             this.pictureBox1 = new PictureBox();
             this.menuStrip1 = new MenuStrip();
-            this.fileToolStripMenuItem = new ToolStripMenuItem();
-            this.openToolStripMenuItem = new ToolStripMenuItem();
-            this.toolStripSeparator2 = new ToolStripSeparator();
-            this.reloadToolStripMenuItem = new ToolStripMenuItem();
-            this.toolStripSeparator4 = new ToolStripSeparator();
-            this.saveToolStripMenuItem = new ToolStripMenuItem();
-            this.saveSkyboxToolStripMenuItem = new ToolStripMenuItem();
-            this.savePowerupsToolStripMenuItem = new ToolStripMenuItem();
-            this.saveObjectsToolStripMenuItem = new ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new ToolStripMenuItem();
-            this.saveSkyboxAsToolStripMenuItem = new ToolStripMenuItem();
-            this.savePowerupsAsToolStripMenuItem = new ToolStripMenuItem();
-            this.saveObjectsAsToolStripMenuItem = new ToolStripMenuItem();
-            this.toolStripSeparator3 = new ToolStripSeparator();
-            this.exitToolStripMenuItem = new ToolStripMenuItem();
-            this.editToolStripMenuItem = new ToolStripMenuItem();
-            this.viewToolStripMenuItem = new ToolStripMenuItem();
-            this.skyboxToolStripMenuItem = new ToolStripMenuItem();
-            this.texturesToolStripMenuItem = new ToolStripMenuItem();
-            this.vertexColorsToolStripMenuItem = new ToolStripMenuItem();
-            this.toolStripSeparator1 = new ToolStripSeparator();
-            this.powerupBricksToolStripMenuItem = new ToolStripMenuItem();
-            this.aIPathsToolStripMenuItem = new ToolStripMenuItem();
-            this.staticObjectsToolStripMenuItem = new ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new ToolStripMenuItem();
+            this.tsmiFile = new ToolStripMenuItem();
+            this.tsmiOpen = new ToolStripMenuItem();
+            this.tssFile1 = new ToolStripSeparator();
+            this.tsmiReload = new ToolStripMenuItem();
+            this.tssFile3 = new ToolStripSeparator();
+            this.tsmiSave = new ToolStripMenuItem();
+            this.tsmiSaveSkybox = new ToolStripMenuItem();
+            this.tsmiSavePowerups = new ToolStripMenuItem();
+            this.tsmiSaveObjects = new ToolStripMenuItem();
+            this.tsmiSaveAs = new ToolStripMenuItem();
+            this.tsmiSaveSkyboxAs = new ToolStripMenuItem();
+            this.tsmiSavePowerupsAs = new ToolStripMenuItem();
+            this.tsmiSaveObjectsAs = new ToolStripMenuItem();
+            this.tssFile2 = new ToolStripSeparator();
+            this.tsmiExit = new ToolStripMenuItem();
+            this.tsmiEdit = new ToolStripMenuItem();
+            this.tsmiView = new ToolStripMenuItem();
+            this.tsmiSkybox = new ToolStripMenuItem();
+            this.tsmiTextures = new ToolStripMenuItem();
+            this.tsmiVertexColors = new ToolStripMenuItem();
+            this.tssView1 = new ToolStripSeparator();
+            this.tsmiPowerupBricks = new ToolStripMenuItem();
+            this.tsmiAIPaths = new ToolStripMenuItem();
+            this.tsmiStaticObjects = new ToolStripMenuItem();
+            this.tsmiOptions = new ToolStripMenuItem();
+            this.tsmiAbout = new ToolStripMenuItem();
             this.button1 = new Button();
             this.tabControl1 = new TabControl();
-            this.tabPageSKB = new TabPage();
+            this.tpSKB = new TabPage();
             this.DefaultSkyboxSelector = new ComboBox();
             this.label13 = new Label();
             this.SkyboxFloatBox = new TextBox();
@@ -696,7 +692,7 @@
             this.label3 = new Label();
             this.label2 = new Label();
             this.SkyboxSelector = new ComboBox();
-            this.tabPagePWB = new TabPage();
+            this.tpPWB = new TabPage();
             this.button3 = new Button();
             this.label31 = new Label();
             this.label30 = new Label();
@@ -719,7 +715,7 @@
             this.editColorContextMenuItem = new ToolStripMenuItem();
             this.saveContextMenuItem = new ToolStripMenuItem();
             this.unloadSelectedContextMenuItem = new ToolStripMenuItem();
-            this.unloadAllToolStripMenuItem = new ToolStripMenuItem();
+            this.tsmiUnloadAll = new ToolStripMenuItem();
             this.imageList1 = new ImageList(this.components);
             this.RRBNodeListBox = new ListBox();
             this.label33 = new Label();
@@ -747,15 +743,15 @@
             this.panel1 = new Panel();
             this.label27 = new Label();
             this.CameraPositionLabel = new Label();
-            ((ISupportInitialize) this.pictureBox1).BeginInit();
+            ((ISupportInitialize)this.pictureBox1).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPageSKB.SuspendLayout();
+            this.tpSKB.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((ISupportInitialize) this.Color3Box).BeginInit();
-            ((ISupportInitialize) this.Color2Box).BeginInit();
-            ((ISupportInitialize) this.Color1Box).BeginInit();
-            this.tabPagePWB.SuspendLayout();
+            ((ISupportInitialize)this.Color3Box).BeginInit();
+            ((ISupportInitialize)this.Color2Box).BeginInit();
+            ((ISupportInitialize)this.Color1Box).BeginInit();
+            this.tpPWB.SuspendLayout();
             this.tabPageRRB.SuspendLayout();
             this.RRBListViewContextMenu.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -770,133 +766,133 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseEnter += new EventHandler(this.pictureBox1_MouseEnter);
             this.menuStrip1.ImageScalingSize = new Size(20, 20);
-            ToolStripItem[] menuStripItems = new ToolStripItem[] { this.fileToolStripMenuItem, this.editToolStripMenuItem, this.viewToolStripMenuItem, this.optionsToolStripMenuItem, this.aboutToolStripMenuItem };
+            ToolStripItem[] menuStripItems = new ToolStripItem[] { this.tsmiFile, this.tsmiEdit, this.tsmiView, this.tsmiOptions, this.tsmiAbout };
             this.menuStrip1.Items.AddRange(menuStripItems);
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new Size(0x43c, 0x1c);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
-            this.fileToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ToolStripItem[] fileToolStripItems = new ToolStripItem[] { this.openToolStripMenuItem, this.toolStripSeparator2, this.reloadToolStripMenuItem, this.toolStripSeparator4, this.saveToolStripMenuItem, this.saveAsToolStripMenuItem, this.toolStripSeparator3, this.exitToolStripMenuItem };
-            this.fileToolStripMenuItem.DropDownItems.AddRange(fileToolStripItems);
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new Size(0x2c, 0x18);
-            this.fileToolStripMenuItem.Text = "&File";
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-            this.openToolStripMenuItem.Text = "&Open...        (Ctrl+O)";
-            this.openToolStripMenuItem.TextImageRelation = TextImageRelation.Overlay;
-            this.openToolStripMenuItem.Click += new EventHandler(this.openToolStripMenuItem_Click);
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new Size(0xd8, 6);
-            this.reloadToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-            this.reloadToolStripMenuItem.Text = "&Reload         (Ctrl+R)";
-            this.reloadToolStripMenuItem.Click += new EventHandler(this.reloadToolStripMenuItem_Click);
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new Size(0xd8, 6);
-            ToolStripItem[] saveToolStripItems = new ToolStripItem[] { this.saveSkyboxToolStripMenuItem, this.savePowerupsToolStripMenuItem, this.saveObjectsToolStripMenuItem };
-            this.saveToolStripMenuItem.DropDownItems.AddRange(saveToolStripItems);
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-            this.saveToolStripMenuItem.Text = "&Save";
-            this.saveSkyboxToolStripMenuItem.Name = "saveSkyboxToolStripMenuItem";
-            this.saveSkyboxToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-            this.saveSkyboxToolStripMenuItem.Text = "Save &Skybox";
-            this.saveSkyboxToolStripMenuItem.Click += new EventHandler(this.saveSkyboxToolStripMenuItem_Click);
-            this.savePowerupsToolStripMenuItem.Name = "savePowerupsToolStripMenuItem";
-            this.savePowerupsToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-            this.savePowerupsToolStripMenuItem.Text = "Save &Powerups";
-            this.savePowerupsToolStripMenuItem.Click += new EventHandler(this.savePowerupsToolStripMenuItem_Click);
-            this.saveObjectsToolStripMenuItem.Name = "saveObjectsToolStripMenuItem";
-            this.saveObjectsToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-            this.saveObjectsToolStripMenuItem.Text = "Save &Objects";
-            ToolStripItem[] saveAsToolStripItems = new ToolStripItem[] { this.saveSkyboxAsToolStripMenuItem, this.savePowerupsAsToolStripMenuItem, this.saveObjectsAsToolStripMenuItem };
-            this.saveAsToolStripMenuItem.DropDownItems.AddRange(saveAsToolStripItems);
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-            this.saveAsToolStripMenuItem.Text = "Save &As";
-            this.saveSkyboxAsToolStripMenuItem.Name = "saveSkyboxAsToolStripMenuItem";
-            this.saveSkyboxAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-            this.saveSkyboxAsToolStripMenuItem.Text = "Save &Skybox As...";
-            this.saveSkyboxAsToolStripMenuItem.Click += new EventHandler(this.saveSkyboxAsToolStripMenuItem_Click);
-            this.savePowerupsAsToolStripMenuItem.Name = "savePowerupsAsToolStripMenuItem";
-            this.savePowerupsAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-            this.savePowerupsAsToolStripMenuItem.Text = "Save &Powerups As...";
-            this.savePowerupsAsToolStripMenuItem.Click += new EventHandler(this.savePowerupsAsToolStripMenuItem_Click);
-            this.saveObjectsAsToolStripMenuItem.Name = "saveObjectsAsToolStripMenuItem";
-            this.saveObjectsAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-            this.saveObjectsAsToolStripMenuItem.Text = "Save &Objects As...";
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new Size(0xd8, 6);
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-            this.exitToolStripMenuItem.Text = "&Exit";
-            this.exitToolStripMenuItem.Click += new EventHandler(this.exitToolStripMenuItem_Click);
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new Size(0x2f, 0x18);
-            this.editToolStripMenuItem.Text = "&Edit";
-            ToolStripItem[] viewToolStripItems = new ToolStripItem[] { this.skyboxToolStripMenuItem, this.texturesToolStripMenuItem, this.vertexColorsToolStripMenuItem, this.toolStripSeparator1, this.powerupBricksToolStripMenuItem, this.aIPathsToolStripMenuItem, this.staticObjectsToolStripMenuItem };
-            this.viewToolStripMenuItem.DropDownItems.AddRange(viewToolStripItems);
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new Size(0x35, 0x18);
-            this.viewToolStripMenuItem.Text = "&View";
-            this.skyboxToolStripMenuItem.Checked = true;
-            this.skyboxToolStripMenuItem.CheckOnClick = true;
-            this.skyboxToolStripMenuItem.CheckState = CheckState.Checked;
-            this.skyboxToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.skyboxToolStripMenuItem.Name = "skyboxToolStripMenuItem";
-            this.skyboxToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.skyboxToolStripMenuItem.Text = "&Skybox";
-            this.skyboxToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.texturesToolStripMenuItem.Checked = true;
-            this.texturesToolStripMenuItem.CheckOnClick = true;
-            this.texturesToolStripMenuItem.CheckState = CheckState.Checked;
-            this.texturesToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.texturesToolStripMenuItem.Name = "texturesToolStripMenuItem";
-            this.texturesToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.texturesToolStripMenuItem.Text = "&Textures";
-            this.texturesToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.vertexColorsToolStripMenuItem.Checked = true;
-            this.vertexColorsToolStripMenuItem.CheckOnClick = true;
-            this.vertexColorsToolStripMenuItem.CheckState = CheckState.Checked;
-            this.vertexColorsToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.vertexColorsToolStripMenuItem.Name = "vertexColorsToolStripMenuItem";
-            this.vertexColorsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.vertexColorsToolStripMenuItem.Text = "&Vertex colors";
-            this.vertexColorsToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new Size(0xb5, 6);
-            this.powerupBricksToolStripMenuItem.CheckOnClick = true;
-            this.powerupBricksToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.powerupBricksToolStripMenuItem.Name = "powerupBricksToolStripMenuItem";
-            this.powerupBricksToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.powerupBricksToolStripMenuItem.Text = "&Powerup bricks";
-            this.powerupBricksToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.aIPathsToolStripMenuItem.Checked = true;
-            this.aIPathsToolStripMenuItem.CheckOnClick = true;
-            this.aIPathsToolStripMenuItem.CheckState = CheckState.Checked;
-            this.aIPathsToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.aIPathsToolStripMenuItem.Name = "aIPathsToolStripMenuItem";
-            this.aIPathsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.aIPathsToolStripMenuItem.Text = "&AI paths";
-            this.aIPathsToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.staticObjectsToolStripMenuItem.CheckOnClick = true;
-            this.staticObjectsToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.staticObjectsToolStripMenuItem.Name = "staticObjectsToolStripMenuItem";
-            this.staticObjectsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-            this.staticObjectsToolStripMenuItem.Text = "Static &objects";
-            this.staticObjectsToolStripMenuItem.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new Size(0x52, 0x18);
-            this.optionsToolStripMenuItem.Text = "&Options...";
-            this.optionsToolStripMenuItem.Click += new EventHandler(this.optionsToolStripMenuItem_Click);
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new Size(0x47, 0x18);
-            this.aboutToolStripMenuItem.Text = "&About...";
-            this.aboutToolStripMenuItem.Click += new EventHandler(this.aboutToolStripMenuItem_Click);
+            this.tsmiFile.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            ToolStripItem[] fileToolStripItems = new ToolStripItem[] { this.tsmiOpen, this.tssFile1, this.tsmiReload, this.tssFile3, this.tsmiSave, this.tsmiSaveAs, this.tssFile2, this.tsmiExit };
+            this.tsmiFile.DropDownItems.AddRange(fileToolStripItems);
+            this.tsmiFile.Name = "tsmiFile";
+            this.tsmiFile.Size = new Size(0x2c, 0x18);
+            this.tsmiFile.Text = "&File";
+            this.tsmiOpen.Name = "tsmiOpen";
+            this.tsmiOpen.Size = new Size(0xdb, 0x1a);
+            this.tsmiOpen.Text = "&Open...        (Ctrl+O)";
+            this.tsmiOpen.TextImageRelation = TextImageRelation.Overlay;
+            this.tsmiOpen.Click += new EventHandler(this.tsmiOpen_Click);
+            this.tssFile1.Name = "tssFile1";
+            this.tssFile1.Size = new Size(0xd8, 6);
+            this.tsmiReload.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiReload.Name = "tsmiReload";
+            this.tsmiReload.Size = new Size(0xdb, 0x1a);
+            this.tsmiReload.Text = "&Reload         (Ctrl+R)";
+            this.tsmiReload.Click += new EventHandler(this.tsmiReload_Click);
+            this.tssFile3.Name = "tssFile3";
+            this.tssFile3.Size = new Size(0xd8, 6);
+            ToolStripItem[] saveToolStripItems = new ToolStripItem[] { this.tsmiSaveSkybox, this.tsmiSavePowerups, this.tsmiSaveObjects };
+            this.tsmiSave.DropDownItems.AddRange(saveToolStripItems);
+            this.tsmiSave.Name = "tsmiSave";
+            this.tsmiSave.Size = new Size(0xdb, 0x1a);
+            this.tsmiSave.Text = "&Save";
+            this.tsmiSaveSkybox.Name = "tsmiSaveSkybox";
+            this.tsmiSaveSkybox.Size = new Size(0xb7, 0x1a);
+            this.tsmiSaveSkybox.Text = "Save &Skybox";
+            this.tsmiSaveSkybox.Click += new EventHandler(this.tsmiSaveSkybox_Click);
+            this.tsmiSavePowerups.Name = "tsmiSavePowerups";
+            this.tsmiSavePowerups.Size = new Size(0xb7, 0x1a);
+            this.tsmiSavePowerups.Text = "Save &Powerups";
+            this.tsmiSavePowerups.Click += new EventHandler(this.tsmiSavePowerups_Click);
+            this.tsmiSaveObjects.Name = "tsmiSaveObjects";
+            this.tsmiSaveObjects.Size = new Size(0xb7, 0x1a);
+            this.tsmiSaveObjects.Text = "Save &Objects";
+            ToolStripItem[] saveAsToolStripItems = new ToolStripItem[] { this.tsmiSaveSkyboxAs, this.tsmiSavePowerupsAs, this.tsmiSaveObjectsAs };
+            this.tsmiSaveAs.DropDownItems.AddRange(saveAsToolStripItems);
+            this.tsmiSaveAs.Name = "tsmiSaveAs";
+            this.tsmiSaveAs.Size = new Size(0xdb, 0x1a);
+            this.tsmiSaveAs.Text = "Save &As";
+            this.tsmiSaveSkyboxAs.Name = "tsmiSaveSkyboxAs";
+            this.tsmiSaveSkyboxAs.Size = new Size(0xd4, 0x1a);
+            this.tsmiSaveSkyboxAs.Text = "Save &Skybox As...";
+            this.tsmiSaveSkyboxAs.Click += new EventHandler(this.tsmiSaveSkyboxAs_Click);
+            this.tsmiSavePowerupsAs.Name = "tsmiSavePowerupsAs";
+            this.tsmiSavePowerupsAs.Size = new Size(0xd4, 0x1a);
+            this.tsmiSavePowerupsAs.Text = "Save &Powerups As...";
+            this.tsmiSavePowerupsAs.Click += new EventHandler(this.tsmiSavePowerupsAs_Click);
+            this.tsmiSaveObjectsAs.Name = "tsmiSaveObjectsAs";
+            this.tsmiSaveObjectsAs.Size = new Size(0xd4, 0x1a);
+            this.tsmiSaveObjectsAs.Text = "Save &Objects As...";
+            this.tssFile2.Name = "tssFile2";
+            this.tssFile2.Size = new Size(0xd8, 6);
+            this.tsmiExit.Name = "tsmiExit";
+            this.tsmiExit.Size = new Size(0xdb, 0x1a);
+            this.tsmiExit.Text = "&Exit";
+            this.tsmiExit.Click += new EventHandler(this.tsmiExit_Click);
+            this.tsmiEdit.Name = "tsmiEdit";
+            this.tsmiEdit.Size = new Size(0x2f, 0x18);
+            this.tsmiEdit.Text = "&Edit";
+            ToolStripItem[] viewToolStripItems = new ToolStripItem[] { this.tsmiSkybox, this.tsmiTextures, this.tsmiVertexColors, this.tssView1, this.tsmiPowerupBricks, this.tsmiAIPaths, this.tsmiStaticObjects };
+            this.tsmiView.DropDownItems.AddRange(viewToolStripItems);
+            this.tsmiView.Name = "tsmiView";
+            this.tsmiView.Size = new Size(0x35, 0x18);
+            this.tsmiView.Text = "&View";
+            this.tsmiSkybox.Checked = true;
+            this.tsmiSkybox.CheckOnClick = true;
+            this.tsmiSkybox.CheckState = CheckState.Checked;
+            this.tsmiSkybox.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiSkybox.Name = "tsmiSkybox";
+            this.tsmiSkybox.Size = new Size(0xb8, 0x1a);
+            this.tsmiSkybox.Text = "&Skybox";
+            this.tsmiSkybox.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tsmiTextures.Checked = true;
+            this.tsmiTextures.CheckOnClick = true;
+            this.tsmiTextures.CheckState = CheckState.Checked;
+            this.tsmiTextures.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiTextures.Name = "tsmiTextures";
+            this.tsmiTextures.Size = new Size(0xb8, 0x1a);
+            this.tsmiTextures.Text = "&Textures";
+            this.tsmiTextures.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tsmiVertexColors.Checked = true;
+            this.tsmiVertexColors.CheckOnClick = true;
+            this.tsmiVertexColors.CheckState = CheckState.Checked;
+            this.tsmiVertexColors.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiVertexColors.Name = "tsmiVertexColors";
+            this.tsmiVertexColors.Size = new Size(0xb8, 0x1a);
+            this.tsmiVertexColors.Text = "&Vertex colors";
+            this.tsmiVertexColors.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tssView1.Name = "tssView1";
+            this.tssView1.Size = new Size(0xb5, 6);
+            this.tsmiPowerupBricks.CheckOnClick = true;
+            this.tsmiPowerupBricks.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiPowerupBricks.Name = "tsmiPowerupBricks";
+            this.tsmiPowerupBricks.Size = new Size(0xb8, 0x1a);
+            this.tsmiPowerupBricks.Text = "&Powerup bricks";
+            this.tsmiPowerupBricks.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tsmiAIPaths.Checked = true;
+            this.tsmiAIPaths.CheckOnClick = true;
+            this.tsmiAIPaths.CheckState = CheckState.Checked;
+            this.tsmiAIPaths.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiAIPaths.Name = "tsmiAIPaths";
+            this.tsmiAIPaths.Size = new Size(0xb8, 0x1a);
+            this.tsmiAIPaths.Text = "&AI paths";
+            this.tsmiAIPaths.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tsmiStaticObjects.CheckOnClick = true;
+            this.tsmiStaticObjects.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.tsmiStaticObjects.Name = "tsmiStaticObjects";
+            this.tsmiStaticObjects.Size = new Size(0xb8, 0x1a);
+            this.tsmiStaticObjects.Text = "Static &objects";
+            this.tsmiStaticObjects.CheckedChanged += new EventHandler(this.displayToolStripMenuItem_CheckedChanged);
+            this.tsmiOptions.Name = "tsmiOptions";
+            this.tsmiOptions.Size = new Size(0x52, 0x18);
+            this.tsmiOptions.Text = "&Options...";
+            this.tsmiOptions.Click += new EventHandler(this.tsmiOptions_Click);
+            this.tsmiAbout.Name = "tsmiAbout";
+            this.tsmiAbout.Size = new Size(0x47, 0x18);
+            this.tsmiAbout.Text = "&About...";
+            this.tsmiAbout.Click += new EventHandler(this.tsmiAbout_Click);
             this.button1.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             this.button1.Location = new System.Drawing.Point(0x331, 0x25c);
             this.button1.Name = "button1";
@@ -907,8 +903,8 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new EventHandler(this.button1_Click);
             this.tabControl1.Anchor = AnchorStyles.Right | AnchorStyles.Bottom | AnchorStyles.Top;
-            this.tabControl1.Controls.Add(this.tabPageSKB);
-            this.tabControl1.Controls.Add(this.tabPagePWB);
+            this.tabControl1.Controls.Add(this.tpSKB);
+            this.tabControl1.Controls.Add(this.tpPWB);
             this.tabControl1.Controls.Add(this.tabPageRRB);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
@@ -920,21 +916,21 @@
             this.tabControl1.Size = new Size(0x10b, 0x19b);
             this.tabControl1.TabIndex = 3;
             this.tabControl1.SelectedIndexChanged += new EventHandler(this.tabControl1_SelectedIndexChanged);
-            this.tabPageSKB.AutoScroll = true;
-            this.tabPageSKB.Controls.Add(this.DefaultSkyboxSelector);
-            this.tabPageSKB.Controls.Add(this.label13);
-            this.tabPageSKB.Controls.Add(this.SkyboxFloatBox);
-            this.tabPageSKB.Controls.Add(this.SkyboxFloatCheckbox);
-            this.tabPageSKB.Controls.Add(this.SkyboxApplybutton);
-            this.tabPageSKB.Controls.Add(this.groupBox1);
-            this.tabPageSKB.Controls.Add(this.SkyboxSelector);
-            this.tabPageSKB.Location = new System.Drawing.Point(4, 0x19);
-            this.tabPageSKB.Name = "tabPageSKB";
-            this.tabPageSKB.Padding = new Padding(3);
-            this.tabPageSKB.Size = new Size(0x103, 0x17e);
-            this.tabPageSKB.TabIndex = 0;
-            this.tabPageSKB.Text = "Skybox";
-            this.tabPageSKB.UseVisualStyleBackColor = true;
+            this.tpSKB.AutoScroll = true;
+            this.tpSKB.Controls.Add(this.DefaultSkyboxSelector);
+            this.tpSKB.Controls.Add(this.label13);
+            this.tpSKB.Controls.Add(this.SkyboxFloatBox);
+            this.tpSKB.Controls.Add(this.SkyboxFloatCheckbox);
+            this.tpSKB.Controls.Add(this.SkyboxApplybutton);
+            this.tpSKB.Controls.Add(this.groupBox1);
+            this.tpSKB.Controls.Add(this.SkyboxSelector);
+            this.tpSKB.Location = new System.Drawing.Point(4, 0x19);
+            this.tpSKB.Name = "tpSKB";
+            this.tpSKB.Padding = new Padding(3);
+            this.tpSKB.Size = new Size(0x103, 0x17e);
+            this.tpSKB.TabIndex = 0;
+            this.tpSKB.Text = "Skybox";
+            this.tpSKB.UseVisualStyleBackColor = true;
             this.DefaultSkyboxSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             this.DefaultSkyboxSelector.FormattingEnabled = true;
             this.DefaultSkyboxSelector.Location = new System.Drawing.Point(15, 0xeb);
@@ -1177,26 +1173,26 @@
             this.SkyboxSelector.Size = new Size(0x79, 0x18);
             this.SkyboxSelector.TabIndex = 5;
             this.SkyboxSelector.SelectedIndexChanged += new EventHandler(this.SkyboxSelector_SelectedIndexChanged);
-            this.tabPagePWB.AutoScroll = true;
-            this.tabPagePWB.Controls.Add(this.button3);
-            this.tabPagePWB.Controls.Add(this.label31);
-            this.tabPagePWB.Controls.Add(this.label30);
-            this.tabPagePWB.Controls.Add(this.label29);
-            this.tabPagePWB.Controls.Add(this.label28);
-            this.tabPagePWB.Controls.Add(this.BrickZtextBox);
-            this.tabPagePWB.Controls.Add(this.BrickYtextBox);
-            this.tabPagePWB.Controls.Add(this.BrickXtextBox);
-            this.tabPagePWB.Controls.Add(this.button2);
-            this.tabPagePWB.Controls.Add(this.BrickColorComboBox);
-            this.tabPagePWB.Controls.Add(this.BrickDeleteButton);
-            this.tabPagePWB.Controls.Add(this.PWBListBox);
-            this.tabPagePWB.Location = new System.Drawing.Point(4, 0x19);
-            this.tabPagePWB.Name = "tabPagePWB";
-            this.tabPagePWB.Padding = new Padding(3);
-            this.tabPagePWB.Size = new Size(0x103, 0x17e);
-            this.tabPagePWB.TabIndex = 1;
-            this.tabPagePWB.Text = "Powerups";
-            this.tabPagePWB.UseVisualStyleBackColor = true;
+            this.tpPWB.AutoScroll = true;
+            this.tpPWB.Controls.Add(this.button3);
+            this.tpPWB.Controls.Add(this.label31);
+            this.tpPWB.Controls.Add(this.label30);
+            this.tpPWB.Controls.Add(this.label29);
+            this.tpPWB.Controls.Add(this.label28);
+            this.tpPWB.Controls.Add(this.BrickZtextBox);
+            this.tpPWB.Controls.Add(this.BrickYtextBox);
+            this.tpPWB.Controls.Add(this.BrickXtextBox);
+            this.tpPWB.Controls.Add(this.button2);
+            this.tpPWB.Controls.Add(this.BrickColorComboBox);
+            this.tpPWB.Controls.Add(this.BrickDeleteButton);
+            this.tpPWB.Controls.Add(this.PWBListBox);
+            this.tpPWB.Location = new System.Drawing.Point(4, 0x19);
+            this.tpPWB.Name = "tpPWB";
+            this.tpPWB.Padding = new Padding(3);
+            this.tpPWB.Size = new Size(0x103, 0x17e);
+            this.tpPWB.TabIndex = 1;
+            this.tpPWB.Text = "Powerups";
+            this.tpPWB.UseVisualStyleBackColor = true;
             this.button3.Location = new System.Drawing.Point(0x9f, 0x129);
             this.button3.Name = "button3";
             this.button3.Size = new Size(0x4b, 0x24);
@@ -1251,8 +1247,8 @@
             this.button2.Click += new EventHandler(this.button2_Click);
             this.BrickColorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.BrickColorComboBox.FormattingEnabled = true;
-            object[] items = new object[] { "White", "Red", "Blue", "Green", "Yellow" };
-            this.BrickColorComboBox.Items.AddRange(items);
+            object[] brickColorItems = new object[] { "White", "Red", "Blue", "Green", "Yellow" };
+            this.BrickColorComboBox.Items.AddRange(brickColorItems);
             this.BrickColorComboBox.Location = new System.Drawing.Point(0x2b, 250);
             this.BrickColorComboBox.Name = "BrickColorComboBox";
             this.BrickColorComboBox.Size = new Size(100, 0x18);
@@ -1268,8 +1264,8 @@
             this.PWBListBox.Enabled = false;
             this.PWBListBox.FormattingEnabled = true;
             this.PWBListBox.ItemHeight = 0x10;
-            items = new object[] { "No PWB Loaded" };
-            this.PWBListBox.Items.AddRange(items);
+            object[] pwbItems = new object[] { "No PWB Loaded" };
+            this.PWBListBox.Items.AddRange(pwbItems);
             this.PWBListBox.Location = new System.Drawing.Point(6, 6);
             this.PWBListBox.Name = "PWBListBox";
             this.PWBListBox.SelectionMode = SelectionMode.MultiExtended;
@@ -1322,7 +1318,7 @@
             this.RRBListView.ItemChecked += new ItemCheckedEventHandler(this.RRBListView_ItemChecked);
             this.columnHeader1.Width = 0x4d;
             this.RRBListViewContextMenu.ImageScalingSize = new Size(20, 20);
-            ToolStripItem[] contextMenuItems = new ToolStripItem[] { this.addNewContextMenuItem, this.editColorContextMenuItem, this.saveContextMenuItem, this.unloadSelectedContextMenuItem, this.unloadAllToolStripMenuItem };
+            ToolStripItem[] contextMenuItems = new ToolStripItem[] { this.addNewContextMenuItem, this.editColorContextMenuItem, this.saveContextMenuItem, this.unloadSelectedContextMenuItem, this.tsmiUnloadAll };
             this.RRBListViewContextMenu.Items.AddRange(contextMenuItems);
             this.RRBListViewContextMenu.Name = "RRBListBoxContextMenu";
             this.RRBListViewContextMenu.ShowImageMargin = false;
@@ -1344,10 +1340,10 @@
             this.unloadSelectedContextMenuItem.Size = new Size(160, 0x18);
             this.unloadSelectedContextMenuItem.Text = "Unload selected";
             this.unloadSelectedContextMenuItem.Click += new EventHandler(this.unloadSelectedContextMenuItem_Click);
-            this.unloadAllToolStripMenuItem.Name = "unloadAllToolStripMenuItem";
-            this.unloadAllToolStripMenuItem.Size = new Size(160, 0x18);
-            this.unloadAllToolStripMenuItem.Text = "Unload all";
-            this.unloadAllToolStripMenuItem.Click += new EventHandler(this.unloadAllToolStripMenuItem_Click);
+            this.tsmiUnloadAll.Name = "tsmiUnloadAll";
+            this.tsmiUnloadAll.Size = new Size(160, 0x18);
+            this.tsmiUnloadAll.Text = "Unload all";
+            this.tsmiUnloadAll.Click += new EventHandler(this.tsmiUnloadAll_Click);
             this.imageList1.ColorDepth = ColorDepth.Depth24Bit;
             this.imageList1.ImageSize = new Size(0x10, 0x10);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
@@ -1550,25 +1546,25 @@
             base.Controls.Add(this.menuStrip1);
             base.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new Size(600, 300);
-            base.Name = "Form1";
+            base.Name = "FormEditor";
             this.Text = "Track Editor";
-            base.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
-            base.ResizeEnd += new EventHandler(this.Form1_ResizeEnd);
-            base.DragEnter += new DragEventHandler(this.Form1_DragEnter);
-            base.Resize += new EventHandler(this.Form1_Resize);
-            ((ISupportInitialize) this.pictureBox1).EndInit();
+            base.FormClosing += new FormClosingEventHandler(this.FormEditor_FormClosing);
+            base.ResizeEnd += new EventHandler(this.FormEditor_ResizeEnd);
+            base.DragEnter += new DragEventHandler(this.FormEditor_DragEnter);
+            base.Resize += new EventHandler(this.FormEditor_Resize);
+            ((ISupportInitialize)this.pictureBox1).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            this.tabPageSKB.ResumeLayout(false);
-            this.tabPageSKB.PerformLayout();
+            this.tpSKB.ResumeLayout(false);
+            this.tpSKB.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((ISupportInitialize) this.Color3Box).EndInit();
-            ((ISupportInitialize) this.Color2Box).EndInit();
-            ((ISupportInitialize) this.Color1Box).EndInit();
-            this.tabPagePWB.ResumeLayout(false);
-            this.tabPagePWB.PerformLayout();
+            ((ISupportInitialize)this.Color3Box).EndInit();
+            ((ISupportInitialize)this.Color2Box).EndInit();
+            ((ISupportInitialize)this.Color1Box).EndInit();
+            this.tpPWB.ResumeLayout(false);
+            this.tpPWB.PerformLayout();
             this.tabPageRRB.ResumeLayout(false);
             this.tabPageRRB.PerformLayout();
             this.RRBListViewContextMenu.ResumeLayout(false);
@@ -1622,7 +1618,7 @@
             this.LoadColorInputBoxes();
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiOpen_Click(object sender, EventArgs e)
         {
             if (this.OpenWarning())
             {
@@ -1630,10 +1626,10 @@
             }
         }
 
-        public bool OpenWarning() => 
+        public bool OpenWarning() =>
             (this.edits.Count <= 0) || (MessageBox.Show("You have made changes in: " + string.Join(", ", this.edits) + "\n Do you want to discard these changes and load a new file anyway?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes);
 
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiOptions_Click(object sender, EventArgs e)
         {
             OptionsForm objA = new OptionsForm(this);
             try
@@ -1642,7 +1638,7 @@
             }
             finally
             {
-                if (!ReferenceEquals(objA, null))
+                if (objA is object)
                 {
                     objA.Dispose();
                 }
@@ -1692,7 +1688,7 @@
                     {
                         break;
                     }
-                    current = (Brick) enumerator.Current;
+                    current = (Brick)enumerator.Current;
                     list.Add(current.index);
                     list2.Add(current.colored);
                 }
@@ -1700,7 +1696,7 @@
             finally
             {
                 disposable = enumerator as IDisposable;
-                if (!ReferenceEquals(disposable, null))
+                if (disposable is object)
                 {
                     disposable.Dispose();
                 }
@@ -1709,7 +1705,7 @@
             this.game.SelectedBricksColored = list2;
             if (list.Count == 1)
             {
-                Brick selectedItem = (Brick) this.PWBListBox.SelectedItem;
+                Brick selectedItem = (Brick)this.PWBListBox.SelectedItem;
                 this.BrickColorComboBox.SelectedItem = selectedItem.Color;
                 this.BrickXtextBox.Text = selectedItem.Position.X.ToString(ci);
                 this.BrickYtextBox.Text = selectedItem.Position.Y.ToString(ci);
@@ -1730,7 +1726,7 @@
                     string text1 = this.BrickZtextBox.Text = "";
                     this.BrickXtextBox.Text = this.BrickYtextBox.Text = text1;
                     bool flag = true;
-                    string color = ((Brick) this.PWBListBox.SelectedItems[0]).Color;
+                    string color = ((Brick)this.PWBListBox.SelectedItems[0]).Color;
                     enumerator = this.PWBListBox.SelectedItems.GetEnumerator();
                     try
                     {
@@ -1741,14 +1737,14 @@
                             {
                                 break;
                             }
-                            current = (Brick) enumerator.Current;
+                            current = (Brick)enumerator.Current;
                             flag &= current.Color == color;
                         }
                     }
                     finally
                     {
                         disposable = enumerator as IDisposable;
-                        if (!ReferenceEquals(disposable, null))
+                        if (disposable is object)
                         {
                             disposable.Dispose();
                         }
@@ -1767,7 +1763,8 @@
 
         private void PWBSaveAs()
         {
-            SaveFileDialog dialog = new SaveFileDialog {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
                 Filter = "Powerups|*.PWB",
                 FileName = "POWERUP.PWB",
                 AddExtension = true,
@@ -1787,7 +1784,7 @@
 
         public void refreshPWB(bool reselect = false)
         {
-            if (ReferenceEquals(this.game.pwb, null))
+            if (this.game.pwb is null)
             {
                 this.PWBListBox.Items.Clear();
                 this.PWBListBox.Items.Add("No PWB Loaded");
@@ -1830,7 +1827,8 @@
                                 }
                                 break;
                             }
-                            brick = new Brick {
+                            brick = new Brick
+                            {
                                 Position = this.game.pwb.WhiteBricks[num].Position,
                                 colored = false,
                                 Color = "White",
@@ -1841,7 +1839,8 @@
                         }
                         break;
                     }
-                    brick = new Brick {
+                    brick = new Brick
+                    {
                         Position = this.game.pwb.ColorBricks[num].Position,
                         colored = true,
                         Color = this.game.pwb.ColorBricks[num].ColorString(),
@@ -1860,7 +1859,8 @@
             int num = 0;
             while (num < this.game.rrbs.Count)
             {
-                ListViewItem item = new ListViewItem(this.game.rrbs[num].getname()) {
+                ListViewItem item = new ListViewItem(this.game.rrbs[num].getname())
+                {
                     Tag = num
                 };
                 if (this.game.rrbs[num].display)
@@ -1939,7 +1939,7 @@
         {
         }
 
-        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiReload_Click(object sender, EventArgs e)
         {
             this.game.Reload();
         }
@@ -1947,7 +1947,7 @@
         public void resetDefaultSize()
         {
             base.Size = !(this.currentDPI == 120f) ? new Size(0x44c, 0x2a4) : new Size(0x483, 0x2ab);
-            this.Form1_ResizeEnd(null, null);
+            this.FormEditor_ResizeEnd(null, null);
         }
 
         private void rightclickmelabel_MouseClick(object sender, MouseEventArgs e)
@@ -1960,7 +1960,7 @@
 
         private void RRBListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            this.game.rrbs[(int) e.Item.Tag].display = e.Item.Checked;
+            this.game.rrbs[(int)e.Item.Tag].display = e.Item.Checked;
         }
 
         private void RRBListViewContextMenu_Opening(object sender, CancelEventArgs e)
@@ -1969,12 +1969,12 @@
             this.RRBListViewContextMenu.Items.Clear();
             if (this.RRBListView.SelectedIndices.Count == 0)
             {
-                itemArray = new ToolStripItem[] { this.addNewContextMenuItem, this.unloadAllToolStripMenuItem };
+                itemArray = new ToolStripItem[] { this.addNewContextMenuItem, this.tsmiUnloadAll };
                 this.RRBListViewContextMenu.Items.AddRange(itemArray);
             }
             else
             {
-                itemArray = new ToolStripItem[] { this.addNewContextMenuItem, this.editColorContextMenuItem, this.saveContextMenuItem, this.unloadSelectedContextMenuItem, this.unloadAllToolStripMenuItem };
+                itemArray = new ToolStripItem[] { this.addNewContextMenuItem, this.editColorContextMenuItem, this.saveContextMenuItem, this.unloadSelectedContextMenuItem, this.tsmiUnloadAll };
                 this.RRBListViewContextMenu.Items.AddRange(itemArray);
             }
         }
@@ -1983,12 +1983,12 @@
         {
         }
 
-        private void savePowerupsAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiSavePowerupsAs_Click(object sender, EventArgs e)
         {
             this.PWBSaveAs();
         }
 
-        private void savePowerupsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiSavePowerups_Click(object sender, EventArgs e)
         {
             if (this.edits.Contains("PWB"))
             {
@@ -2006,12 +2006,12 @@
             }
         }
 
-        private void saveSkyboxAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiSaveSkyboxAs_Click(object sender, EventArgs e)
         {
             this.SKBSaveAs();
         }
 
-        private void saveSkyboxToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiSaveSkybox_Click(object sender, EventArgs e)
         {
             if (this.edits.Contains("SKB"))
             {
@@ -2041,38 +2041,38 @@
                 this.pictureBox1.Size = new Size(0x322, 0x25a);
                 this.menuStrip1.Location = new System.Drawing.Point(0, 0);
                 this.menuStrip1.Size = new Size(0x43c, 0x18);
-                this.fileToolStripMenuItem.Size = new Size(0x25, 20);
-                this.openToolStripMenuItem.Size = new Size(180, 0x16);
-                this.toolStripSeparator2.Size = new Size(0xb1, 6);
-                this.reloadToolStripMenuItem.Size = new Size(180, 0x16);
-                this.toolStripSeparator4.Size = new Size(0xb1, 6);
-                this.saveToolStripMenuItem.Size = new Size(180, 0x16);
-                this.saveSkyboxToolStripMenuItem.Size = new Size(0x99, 0x16);
-                this.savePowerupsToolStripMenuItem.Size = new Size(0x99, 0x16);
-                this.saveObjectsToolStripMenuItem.Size = new Size(0x99, 0x16);
-                this.saveAsToolStripMenuItem.Size = new Size(180, 0x16);
-                this.saveSkyboxAsToolStripMenuItem.Size = new Size(0xb2, 0x16);
-                this.savePowerupsAsToolStripMenuItem.Size = new Size(0xb2, 0x16);
-                this.saveObjectsAsToolStripMenuItem.Size = new Size(0xb2, 0x16);
-                this.toolStripSeparator3.Size = new Size(0xb1, 6);
-                this.exitToolStripMenuItem.Size = new Size(180, 0x16);
-                this.editToolStripMenuItem.Size = new Size(0x27, 20);
-                this.viewToolStripMenuItem.Size = new Size(0x2c, 20);
-                this.skyboxToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.texturesToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.vertexColorsToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.toolStripSeparator1.Size = new Size(0x98, 6);
-                this.powerupBricksToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.aIPathsToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.staticObjectsToolStripMenuItem.Size = new Size(0x9b, 0x16);
-                this.optionsToolStripMenuItem.Size = new Size(70, 20);
-                this.aboutToolStripMenuItem.Size = new Size(0x3d, 20);
+                this.tsmiFile.Size = new Size(0x25, 20);
+                this.tsmiOpen.Size = new Size(180, 0x16);
+                this.tssFile1.Size = new Size(0xb1, 6);
+                this.tsmiReload.Size = new Size(180, 0x16);
+                this.tssFile3.Size = new Size(0xb1, 6);
+                this.tsmiSave.Size = new Size(180, 0x16);
+                this.tsmiSaveSkybox.Size = new Size(0x99, 0x16);
+                this.tsmiSavePowerups.Size = new Size(0x99, 0x16);
+                this.tsmiSaveObjects.Size = new Size(0x99, 0x16);
+                this.tsmiSaveAs.Size = new Size(180, 0x16);
+                this.tsmiSaveSkyboxAs.Size = new Size(0xb2, 0x16);
+                this.tsmiSavePowerupsAs.Size = new Size(0xb2, 0x16);
+                this.tsmiSaveObjectsAs.Size = new Size(0xb2, 0x16);
+                this.tssFile2.Size = new Size(0xb1, 6);
+                this.tsmiExit.Size = new Size(180, 0x16);
+                this.tsmiEdit.Size = new Size(0x27, 20);
+                this.tsmiView.Size = new Size(0x2c, 20);
+                this.tsmiSkybox.Size = new Size(0x9b, 0x16);
+                this.tsmiTextures.Size = new Size(0x9b, 0x16);
+                this.tsmiVertexColors.Size = new Size(0x9b, 0x16);
+                this.tssView1.Size = new Size(0x98, 6);
+                this.tsmiPowerupBricks.Size = new Size(0x9b, 0x16);
+                this.tsmiAIPaths.Size = new Size(0x9b, 0x16);
+                this.tsmiStaticObjects.Size = new Size(0x9b, 0x16);
+                this.tsmiOptions.Size = new Size(70, 20);
+                this.tsmiAbout.Size = new Size(0x3d, 20);
                 this.button1.Location = new System.Drawing.Point(0x331, 0x25c);
                 this.button1.Size = new Size(0x4b, 0x17);
                 this.tabControl1.Location = new System.Drawing.Point(0x331, 0x1a);
                 this.tabControl1.Size = new Size(0x10b, 0x19b);
-                this.tabPageSKB.Location = new System.Drawing.Point(4, 0x16);
-                this.tabPageSKB.Size = new Size(0x103, 0x181);
+                this.tpSKB.Location = new System.Drawing.Point(4, 0x16);
+                this.tpSKB.Size = new Size(0x103, 0x181);
                 this.DefaultSkyboxSelector.Location = new System.Drawing.Point(15, 0xeb);
                 this.DefaultSkyboxSelector.Size = new Size(0x79, 0x15);
                 this.label13.Location = new System.Drawing.Point(12, 0xdb);
@@ -2139,8 +2139,8 @@
                 this.label2.Size = new Size(40, 13);
                 this.SkyboxSelector.Location = new System.Drawing.Point(0x44, 6);
                 this.SkyboxSelector.Size = new Size(0x79, 0x15);
-                this.tabPagePWB.Location = new System.Drawing.Point(4, 0x16);
-                this.tabPagePWB.Size = new Size(0x103, 0x181);
+                this.tpPWB.Location = new System.Drawing.Point(4, 0x16);
+                this.tpPWB.Size = new Size(0x103, 0x181);
                 this.button3.Location = new System.Drawing.Point(0x9f, 0x129);
                 this.button3.Size = new Size(0x4b, 0x24);
                 this.label31.Location = new System.Drawing.Point(3, 0xfe);
@@ -2176,7 +2176,7 @@
                 this.editColorContextMenuItem.Size = new Size(0x85, 0x16);
                 this.saveContextMenuItem.Size = new Size(0x85, 0x16);
                 this.unloadSelectedContextMenuItem.Size = new Size(0x85, 0x16);
-                this.unloadAllToolStripMenuItem.Size = new Size(0x85, 0x16);
+                this.tsmiUnloadAll.Size = new Size(0x85, 0x16);
                 this.imageList1.ImageSize = new Size(0x10, 0x10);
                 this.RRBNodeListBox.Location = new System.Drawing.Point(6, 0xa9);
                 this.RRBNodeListBox.Size = new Size(0xe4, 160);
@@ -2241,38 +2241,38 @@
                 this.menuStrip1.ImageScalingSize = new Size(20, 20);
                 this.menuStrip1.Location = new System.Drawing.Point(0, 0);
                 this.menuStrip1.Size = new Size(0x46c, 0x1c);
-                this.fileToolStripMenuItem.Size = new Size(0x2c, 0x18);
-                this.openToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-                this.toolStripSeparator2.Size = new Size(0xd8, 6);
-                this.reloadToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-                this.toolStripSeparator4.Size = new Size(0xd8, 6);
-                this.saveToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-                this.saveSkyboxToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-                this.savePowerupsToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-                this.saveObjectsToolStripMenuItem.Size = new Size(0xb7, 0x1a);
-                this.saveAsToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-                this.saveSkyboxAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-                this.savePowerupsAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-                this.saveObjectsAsToolStripMenuItem.Size = new Size(0xd4, 0x1a);
-                this.toolStripSeparator3.Size = new Size(0xd8, 6);
-                this.exitToolStripMenuItem.Size = new Size(0xdb, 0x1a);
-                this.editToolStripMenuItem.Size = new Size(0x2f, 0x18);
-                this.viewToolStripMenuItem.Size = new Size(0x35, 0x18);
-                this.skyboxToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.texturesToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.vertexColorsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.toolStripSeparator1.Size = new Size(0xb5, 6);
-                this.powerupBricksToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.aIPathsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.staticObjectsToolStripMenuItem.Size = new Size(0xb8, 0x1a);
-                this.optionsToolStripMenuItem.Size = new Size(0x52, 0x18);
-                this.aboutToolStripMenuItem.Size = new Size(0x47, 0x18);
+                this.tsmiFile.Size = new Size(0x2c, 0x18);
+                this.tsmiOpen.Size = new Size(0xdb, 0x1a);
+                this.tssFile1.Size = new Size(0xd8, 6);
+                this.tsmiReload.Size = new Size(0xdb, 0x1a);
+                this.tssFile3.Size = new Size(0xd8, 6);
+                this.tsmiSave.Size = new Size(0xdb, 0x1a);
+                this.tsmiSaveSkybox.Size = new Size(0xb7, 0x1a);
+                this.tsmiSavePowerups.Size = new Size(0xb7, 0x1a);
+                this.tsmiSaveObjects.Size = new Size(0xb7, 0x1a);
+                this.tsmiSaveAs.Size = new Size(0xdb, 0x1a);
+                this.tsmiSaveSkyboxAs.Size = new Size(0xd4, 0x1a);
+                this.tsmiSavePowerupsAs.Size = new Size(0xd4, 0x1a);
+                this.tsmiSaveObjectsAs.Size = new Size(0xd4, 0x1a);
+                this.tssFile2.Size = new Size(0xd8, 6);
+                this.tsmiExit.Size = new Size(0xdb, 0x1a);
+                this.tsmiEdit.Size = new Size(0x2f, 0x18);
+                this.tsmiView.Size = new Size(0x35, 0x18);
+                this.tsmiSkybox.Size = new Size(0xb8, 0x1a);
+                this.tsmiTextures.Size = new Size(0xb8, 0x1a);
+                this.tsmiVertexColors.Size = new Size(0xb8, 0x1a);
+                this.tssView1.Size = new Size(0xb5, 6);
+                this.tsmiPowerupBricks.Size = new Size(0xb8, 0x1a);
+                this.tsmiAIPaths.Size = new Size(0xb8, 0x1a);
+                this.tsmiStaticObjects.Size = new Size(0xb8, 0x1a);
+                this.tsmiOptions.Size = new Size(0x52, 0x18);
+                this.tsmiAbout.Size = new Size(0x47, 0x18);
                 this.button1.Location = new System.Drawing.Point(0x331, 0x25a);
                 this.button1.Size = new Size(0x6a, 0x1b);
                 this.tabControl1.Location = new System.Drawing.Point(0x331, 0x1a);
                 this.tabControl1.Size = new Size(0x13b, 0x1a3);
-                this.tabPageSKB.Location = new System.Drawing.Point(4, 0x19);
-                this.tabPageSKB.Size = new Size(0x133, 390);
+                this.tpSKB.Location = new System.Drawing.Point(4, 0x19);
+                this.tpSKB.Size = new Size(0x133, 390);
                 this.DefaultSkyboxSelector.Location = new System.Drawing.Point(14, 0xef);
                 this.DefaultSkyboxSelector.Size = new Size(0x79, 0x18);
                 this.BrickplaceStopButton.Location = new System.Drawing.Point(0x3a6, 0xb1);
@@ -2343,8 +2343,8 @@
                 this.label2.Size = new Size(0x35, 0x11);
                 this.SkyboxSelector.Location = new System.Drawing.Point(0x4e, 6);
                 this.SkyboxSelector.Size = new Size(0x91, 0x18);
-                this.tabPagePWB.Location = new System.Drawing.Point(4, 0x19);
-                this.tabPagePWB.Size = new Size(0x133, 390);
+                this.tpPWB.Location = new System.Drawing.Point(4, 0x19);
+                this.tpPWB.Size = new Size(0x133, 390);
                 this.button3.Location = new System.Drawing.Point(0xcb, 0x11e);
                 this.button3.Size = new Size(0x4b, 0x19);
                 this.label31.Location = new System.Drawing.Point(9, 0xf8);
@@ -2381,7 +2381,7 @@
                 this.editColorContextMenuItem.Size = new Size(160, 0x1a);
                 this.saveContextMenuItem.Size = new Size(160, 0x1a);
                 this.unloadSelectedContextMenuItem.Size = new Size(160, 0x1a);
-                this.unloadAllToolStripMenuItem.Size = new Size(160, 0x1a);
+                this.tsmiUnloadAll.Size = new Size(160, 0x1a);
                 this.imageList1.ImageSize = new Size(0x10, 0x10);
                 this.RRBNodeListBox.Location = new System.Drawing.Point(6, 0xb8);
                 this.RRBNodeListBox.Size = new Size(0xe4, 0xa4);
@@ -2455,7 +2455,8 @@
 
         private void SKBSaveAs()
         {
-            SaveFileDialog dialog = new SaveFileDialog {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
                 Filter = "Skybox|*.SKB",
                 FileName = "BACKGRND.SKB",
                 AddExtension = true,
@@ -2475,22 +2476,22 @@
 
         private void SkyboxApplybutton_Click(object sender, EventArgs e)
         {
-            WindowsGame2.SKB objA = this.game.skb;
-            if (ReferenceEquals(objA, null))
+            LR1TrackEditor.SKB objA = this.game.skb;
+            if (objA is null)
             {
                 MessageBox.Show("Please open an SKB file before editing it", "Error");
             }
             else
             {
-                SKB_Gradient gradient = new SKB_Gradient {
+                SKB_Gradient gradient = new SKB_Gradient
+                {
                     Color3 = new LRColor(this.Color1Box.BackColor.R, this.Color1Box.BackColor.G, this.Color1Box.BackColor.B, this.Color1Box.BackColor.A),
                     Color2 = new LRColor(this.Color2Box.BackColor.R, this.Color2Box.BackColor.G, this.Color2Box.BackColor.B, this.Color2Box.BackColor.A),
                     Color1 = new LRColor(this.Color3Box.BackColor.R, this.Color3Box.BackColor.G, this.Color3Box.BackColor.B, this.Color3Box.BackColor.A)
                 };
                 if (this.SkyboxIntCheckbox.Checked)
                 {
-                    int num;
-                    if (int.TryParse(this.SkyboxIntBox.Text, out num))
+                    if (int.TryParse(this.SkyboxIntBox.Text, out int num))
                     {
                         gradient.UnknownInt = new int?(num);
                     }
@@ -2500,8 +2501,8 @@
                         return;
                     }
                 }
-                this.game.skb.Gradients[(string) this.SkyboxSelector.SelectedItem] = gradient;
-                this.game.skb.Default = (string) this.DefaultSkyboxSelector.SelectedItem;
+                this.game.skb.Gradients[(string)this.SkyboxSelector.SelectedItem] = gradient;
+                this.game.skb.Default = (string)this.DefaultSkyboxSelector.SelectedItem;
                 gradient = objA.Gradients[this.game.skb.Default];
                 this.game.skbmesh = Utils.GenerateSKBMesh(new Microsoft.Xna.Framework.Color(gradient.Color1.R, gradient.Color1.G, gradient.Color1.B), new Microsoft.Xna.Framework.Color(gradient.Color2.R, gradient.Color2.G, gradient.Color2.B), new Microsoft.Xna.Framework.Color(gradient.Color3.R, gradient.Color3.G, gradient.Color3.B));
                 if (!this.edits.Contains("SKB"))
@@ -2523,7 +2524,7 @@
 
         private void SkyboxSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string selectedItem = (string) this.SkyboxSelector.SelectedItem;
+            string selectedItem = (string)this.SkyboxSelector.SelectedItem;
             this.LoadGradient(this.game.skb.Gradients[selectedItem]);
         }
 
@@ -2534,7 +2535,7 @@
             this.DeselectBricks();
         }
 
-        private void unloadAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiUnloadAll_Click(object sender, EventArgs e)
         {
             this.game.rrbs.Clear();
             this.refreshRRB();
@@ -2542,7 +2543,7 @@
 
         private void unloadSelectedContextMenuItem_Click(object sender, EventArgs e)
         {
-            this.game.rrbs.RemoveAt((int) this.RRBListView.SelectedItems[0].Tag);
+            this.game.rrbs.RemoveAt((int)this.RRBListView.SelectedItems[0].Tag);
             this.refreshRRB();
         }
 
@@ -2554,18 +2555,18 @@
 
         public bool PWBToolStripItemChecked
         {
-            get => 
-                this.powerupBricksToolStripMenuItem.Checked;
-            set => 
-                this.powerupBricksToolStripMenuItem.Checked = value;
+            get =>
+                this.tsmiPowerupBricks.Checked;
+            set =>
+                this.tsmiPowerupBricks.Checked = value;
         }
 
         public bool staticObjectsToolStripItemChecked
         {
-            get => 
-                this.staticObjectsToolStripMenuItem.Checked;
-            set => 
-                this.staticObjectsToolStripMenuItem.Checked = value;
+            get =>
+                this.tsmiStaticObjects.Checked;
+            set =>
+                this.tsmiStaticObjects.Checked = value;
         }
 
         public bool TabControlFocused =>

@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1.Utils;
     using Microsoft.Xna.Framework;
@@ -15,8 +15,8 @@
     public static class Utils
     {
         private const float EPSILON = 1E-07f;
-        public static Form1 form;
-        public static Game1 game;
+        public static FormEditor form;
+        public static GameView game;
 
         public static float? distanceToTriangle(Ray input)
         {
@@ -48,7 +48,7 @@
             }
         }
 
-        public static VertexPTC[] GenerateSKBMesh(Color color1, Color color2, Color color3) => 
+        public static VertexPTC[] GenerateSKBMesh(Color color1, Color color2, Color color3) =>
             new VertexPTC[] { new VertexPTC(new Vector3(10f, 0f, -5f), color1), new VertexPTC(new Vector3(-10f, 0f, -5f), color1), new VertexPTC(new Vector3(10f, 0f, 2.5f), color2), new VertexPTC(new Vector3(-10f, 0f, 2.5f), color2), new VertexPTC(new Vector3(10f, 0f, 10f), color3), new VertexPTC(new Vector3(-10f, 0f, 10f), color3) };
 
         public static string getGamedir(string modelpath)
@@ -77,7 +77,8 @@
         public static void OpenFileDialog(int filterindex)
         {
             Func<RRBFile, bool> predicate = null;
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog {
+            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog
+            {
                 Filter = "3D Objects|*.GDB|Powerups|*.PWB|AI Paths|*.RRB|3D Scenes|*.WDB",
                 FilterIndex = filterindex,
                 Multiselect = false,
@@ -101,7 +102,7 @@
                 else if (ofd.FileName.EndsWith("PWB", StringComparison.InvariantCultureIgnoreCase))
                 {
                     game.pwb = Loader.loadPWB(game, ofd.FileName);
-                    if (!ReferenceEquals(game.pwb, null))
+                    if (game.pwb is object)
                     {
                         form.PWBToolStripItemChecked = true;
                         form.refreshPWB(false);
@@ -143,9 +144,9 @@
             Vector3 vector2 = v3 - v1;
             Vector3 vector3 = Vector3.Cross(ray.Direction, vector2);
             float num = Vector3.Dot(vector, vector3);
-            if (inputhandler.cullmode != 1)
+            if (InputHandler.cullmode != 1)
             {
-                if (inputhandler.cullmode != 2)
+                if (InputHandler.cullmode != 2)
                 {
                     if ((num < 1E-07f) && (num > -1E-07f))
                     {
@@ -197,7 +198,8 @@
         public static DialogResult STAShowDialog(FileDialog dialog)
         {
             Console.WriteLine("Opening FileDialog");
-            DialogState state = new DialogState {
+            DialogState state = new DialogState
+            {
                 dialog = dialog
             };
             Thread thread = new Thread(new ThreadStart(state.ThreadProcShowDialog));
@@ -208,17 +210,18 @@
             return state.result;
         }
 
-        public static Vector2 toXNAVector(this LRVector2 input) => 
+        public static Vector2 toXNAVector(this LRVector2 input) =>
             new Vector2(input.X, input.Y);
 
-        public static Vector3 toXNAVector(this LRVector3 input) => 
+        public static Vector3 toXNAVector(this LRVector3 input) =>
             new Vector3(input.X, input.Y, input.Z);
 
-        public static Vector3 vectorfromcolor(Color input) => 
-            new Vector3 { 
-                X = ((float) input.R) / 255f,
-                Y = ((float) input.G) / 255f,
-                Z = ((float) input.B) / 255f
+        public static Vector3 vectorfromcolor(Color input) =>
+            new Vector3
+            {
+                X = ((float)input.R) / 255f,
+                Y = ((float)input.G) / 255f,
+                Z = ((float)input.B) / 255f
             };
 
         public static void WriteLine(string text, ConsoleColor? col = new ConsoleColor?())

@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1.Utils;
     using System;

@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1;
     using Microsoft.Xna.Framework;
@@ -32,22 +32,22 @@
             {
                 if (meta.Type == 0x27)
                 {
-                    matid = ((GDB_Meta_Material) meta).MaterialId;
+                    matid = ((GDB_Meta_Material)meta).MaterialId;
                 }
                 else if (meta.Type == 50)
                 {
-                    boneid = ((GDB_Meta_Bone) meta).BoneId;
+                    boneid = ((GDB_Meta_Bone)meta).BoneId;
                 }
                 else if (meta.Type == 0x31)
                 {
-                    GDB_Meta_Vertices vertices = (GDB_Meta_Vertices) meta;
+                    GDB_Meta_Vertices vertices = (GDB_Meta_Vertices)meta;
                     vstart = vertices.Offset;
                     length = vertices.Length;
                     vertexoffset = vertices.UnknownByte;
                 }
                 else if (meta.Type == 0x2d)
                 {
-                    GDB_Meta_Indices indices = (GDB_Meta_Indices) meta;
+                    GDB_Meta_Indices indices = (GDB_Meta_Indices)meta;
                     list.Add(new Block(matid, boneid, vertexoffset, vstart, length, indices.Offset, indices.Length));
                 }
             }
@@ -80,17 +80,17 @@
                         material2 = new Material();
                         if (material.Alpha != null)
                         {
-                            material2.alpha = (byte) material.Alpha.Value;
+                            material2.alpha = (byte)material.Alpha.Value;
                         }
-                        if (!ReferenceEquals(material.AmbientColor, null))
+                        if (material.AmbientColor is object)
                         {
                             material2.ambientcolor = new Microsoft.Xna.Framework.Color(material.AmbientColor.R, material.AmbientColor.G, material.AmbientColor.B, material.AmbientColor.A);
                         }
-                        if (!ReferenceEquals(material.DiffuseColor, null))
+                        if (material.DiffuseColor is object)
                         {
                             material2.diffusecolor = new Microsoft.Xna.Framework.Color(material.DiffuseColor.R, material.DiffuseColor.G, material.DiffuseColor.B, material.DiffuseColor.A);
                         }
-                        if (!ReferenceEquals(material.TextureName, null))
+                        if (material.TextureName is object)
                         {
                             TDB_Texture texture = tdb.Textures[material.TextureName];
                             if (!texture.IsBitmap)
@@ -134,7 +134,7 @@
                                         }
                                         finally
                                         {
-                                            if (!ReferenceEquals(stream, null))
+                                            if (stream is object)
                                             {
                                                 stream.Dispose();
                                             }
@@ -163,7 +163,7 @@
                                                 }
                                                 finally
                                                 {
-                                                    if (!ReferenceEquals(stream, null))
+                                                    if (stream is object)
                                                     {
                                                         stream.Dispose();
                                                     }
@@ -199,10 +199,10 @@
             }
         }
 
-        public static WindowsGame2.Model loadmodel(Game1 game, string modelpath, bool rotatingboundingbox = false)
+        public static LR1TrackEditor.Model loadmodel(GameView game, string modelpath, bool rotatingboundingbox = false)
         {
             Utils.WriteLine("Loading GDB: " + modelpath, ConsoleColor.DarkYellow);
-            WindowsGame2.Model model = new WindowsGame2.Model();
+            LR1TrackEditor.Model model = new LR1TrackEditor.Model();
             if (Path.GetExtension(modelpath).ToLower() == ".gdb")
             {
                 GDB gdb = new GDB(modelpath);
@@ -312,15 +312,15 @@
                             int num5 = num4 - current.vertexoffset;
                             if (num5 >= current.vertexlength)
                             {
-                                list2.Add((ushort) (block2.vertexstart + (num4 - block2.vertexoffset)));
+                                list2.Add((ushort)(block2.vertexstart + (num4 - block2.vertexoffset)));
                             }
                             else if (num5 < 0)
                             {
-                                list2.Add((ushort) (block2.vertexstart + num4));
+                                list2.Add((ushort)(block2.vertexstart + num4));
                             }
                             else
                             {
-                                list2.Add((ushort) (current.vertexstart + num5));
+                                list2.Add((ushort)(current.vertexstart + num5));
                             }
                             index++;
                         }
@@ -328,14 +328,14 @@
                 }
             }
             model.parts = (from part in model.parts
-                orderby ((part.material != null) && game.materials.ContainsKey(part.material)) && game.materials[part.material].semitransparent
-                select part).ToList<ModelPart>();
+                           orderby ((part.material != null) && game.materials.ContainsKey(part.material)) && game.materials[part.material].semitransparent
+                           select part).ToList<ModelPart>();
             model.CreateBuffers(game.GraphicsDevice);
             model.generateBoundingBox(rotatingboundingbox);
             return model;
         }
 
-        public static PWB loadPWB(Game1 game, string pwbpath)
+        public static PWB loadPWB(GameView game, string pwbpath)
         {
             Action<KeyValuePair<string, Material>> action = null;
             PWB pwb;
@@ -343,7 +343,7 @@
             game.SelectedBrickIndices.Clear();
             game.currentPWBfile = pwbpath;
             Utils.WriteLine("Loading PWB " + pwbpath, ConsoleColor.DarkGreen);
-            if (!ReferenceEquals(game.pupbrick, null))
+            if (game.pupbrick is object)
             {
                 pwb = new PWB(pwbpath);
             }
@@ -366,7 +366,8 @@
                     game.enhatrail = loadmodel(game, Path.Combine(Path.GetDirectoryName(str2), "ENHANER.GDB"), false);
                     if (action == null)
                     {
-                        action = delegate (KeyValuePair<string, Material> x) {
+                        action = delegate (KeyValuePair<string, Material> x)
+                        {
                             game.corematerials[x.Key] = x.Value;
                         };
                     }
@@ -383,13 +384,13 @@
             return new RRB(rrbpath);
         }
 
-        public static WindowsGame2.SKB loadSKB(string skbpath)
+        public static LR1TrackEditor.SKB loadSKB(string skbpath)
         {
             Utils.WriteLine("Loading SKB: " + skbpath, ConsoleColor.White);
-            return new WindowsGame2.SKB(skbpath);
+            return new LR1TrackEditor.SKB(skbpath);
         }
 
-        public static WDB loadWDB(Game1 game, string wdbpath)
+        public static WDB loadWDB(GameView game, string wdbpath)
         {
             WDB wdb = new WDB(wdbpath);
             Utils.WriteLine("Loading WDB: " + wdbpath, ConsoleColor.Magenta);

@@ -1,5 +1,6 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
+    using LibLR1;
     using LibLR1.Exceptions;
     using LibLR1.IO;
     using LibLR1.Utils;
@@ -34,27 +35,27 @@
                     switch (num2)
                     {
                         case 0x2c:
-                        {
-                            this.Gradients = objA.ReadArrayBlock<KeyValuePair<string, SKB_Gradient>>(new Func<LRBinaryReader, KeyValuePair<string, SKB_Gradient>>(SKB.ReadGradientblock)).ToDictionary<KeyValuePair<string, SKB_Gradient>, string, SKB_Gradient>(x => x.Key, x => x.Value);
-                            continue;
-                        }
+                            {
+                                this.Gradients = objA.ReadArrayBlock<KeyValuePair<string, SKB_Gradient>>(new Func<LRBinaryReader, KeyValuePair<string, SKB_Gradient>>(SKB.ReadGradientblock)).ToDictionary<KeyValuePair<string, SKB_Gradient>, string, SKB_Gradient>(x => x.Key, x => x.Value);
+                                continue;
+                            }
                         case 0x2d:
-                        {
-                            this.Default = objA.ReadStringWithHeader();
-                            continue;
-                        }
+                            {
+                                this.Default = objA.ReadStringWithHeader();
+                                continue;
+                            }
                         case 0x2e:
-                        {
-                            this.Unknownfloat = new float?(objA.ReadFloatWithHeader());
-                            continue;
-                        }
+                            {
+                                this.Unknownfloat = new float?(objA.ReadFloatWithHeader());
+                                continue;
+                            }
                     }
                     throw new UnexpectedBlockException(num, objA.BaseStream.Position - 1L);
                 }
             }
             finally
             {
-                if (!ReferenceEquals(objA, null))
+                if (objA is object)
                 {
                     objA.Dispose();
                 }
@@ -63,13 +64,13 @@
 
         private static KeyValuePair<string, SKB_Gradient> ReadGradientblock(LRBinaryReader r)
         {
-            r.Expect((byte) 0x27);
+            r.Expect((byte)0x27);
             r.Expect(Token.LeftBracket);
             r.ReadIntWithHeader();
             r.Expect(Token.RightBracket);
             string key = r.ReadStringWithHeader();
             r.Expect(Token.LeftCurly);
-            r.Expect((byte) 0x27);
+            r.Expect((byte)0x27);
             r.Expect(Token.RightCurly);
             return new KeyValuePair<string, SKB_Gradient>(key, r.ReadStruct<SKB_Gradient>(new Func<LRBinaryReader, SKB_Gradient>(SKB_Gradient.FromStream)));
         }
@@ -99,10 +100,7 @@
             }
             finally
             {
-                if (!ReferenceEquals(writer, null))
-                {
-                    writer.Dispose();
-                }
+                writer?.Dispose();
             }
         }
 

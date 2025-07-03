@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using System;
     using System.ComponentModel;
@@ -10,7 +10,7 @@
     public class OptionsForm : Form
     {
         private static CultureInfo ci = CultureInfo.InvariantCulture;
-        private Form1 parentform;
+        private FormEditor parentform;
         private IContainer components = null;
         private TrackBar trackBar1;
         private Label label2;
@@ -36,7 +36,7 @@
         private CheckBox checkBoxGhost;
         private Button button4;
 
-        public OptionsForm(Form1 parentform)
+        public OptionsForm(FormEditor parentform)
         {
             this.InitializeComponent();
             this.parentform = parentform;
@@ -49,11 +49,11 @@
             this.checkBoxConsole.Checked = Settings.Default.ShowConsole;
             this.pictureBox1.BackColor = Settings.Default.BackgroundColor;
             this.textBox1.Text = Settings.Default.RenderDistance.ToString(ci);
-            this.trackBar1.Value = (int) Math.Min(Settings.Default.RenderDistance, (float) this.trackBar1.Maximum);
+            this.trackBar1.Value = (int)Math.Min(Settings.Default.RenderDistance, (float)this.trackBar1.Maximum);
             this.textBox2.Text = Settings.Default.FlySpeed.ToString(ci);
-            this.trackBar2.Value = (int) Math.Min(Settings.Default.FlySpeed * 10f, (float) this.trackBar2.Maximum);
+            this.trackBar2.Value = (int)Math.Min(Settings.Default.FlySpeed * 10f, (float)this.trackBar2.Maximum);
             this.textBox3.Text = Settings.Default.FoV.ToString(ci);
-            this.trackBar3.Value = (int) Math.Min(Settings.Default.FoV, (float) this.trackBar3.Maximum);
+            this.trackBar3.Value = (int)Math.Min(Settings.Default.FoV, (float)this.trackBar3.Maximum);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -81,7 +81,8 @@
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ColorDialog dialog = new ColorDialog {
+            ColorDialog dialog = new ColorDialog
+            {
                 AllowFullOpen = true,
                 SolidColorOnly = true,
                 Color = this.pictureBox1.BackColor,
@@ -101,7 +102,7 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!(!disposing || ReferenceEquals(this.components, null)))
+            if (!(!disposing || this.components is null))
             {
                 this.components.Dispose();
             }
@@ -135,7 +136,7 @@
             this.button4 = new Button();
             this.trackBar1.BeginInit();
             this.trackBar2.BeginInit();
-            ((ISupportInitialize) this.pictureBox1).BeginInit();
+            ((ISupportInitialize)this.pictureBox1).BeginInit();
             this.trackBar3.BeginInit();
             base.SuspendLayout();
             this.trackBar1.AutoSize = false;
@@ -345,7 +346,7 @@
             this.Text = "Options";
             this.trackBar1.EndInit();
             this.trackBar2.EndInit();
-            ((ISupportInitialize) this.pictureBox1).EndInit();
+            ((ISupportInitialize)this.pictureBox1).EndInit();
             this.trackBar3.EndInit();
             base.ResumeLayout(false);
             base.PerformLayout();
@@ -396,14 +397,14 @@
             {
                 bar = this.trackBar3;
             }
-            float tag = (float) bar.Tag;
+            float tag = (float)bar.Tag;
             float num2 = float.Parse(objA.Text, ci);
             if ((num2 * tag) < bar.Minimum)
             {
-                num2 = ((float) bar.Minimum) / tag;
+                num2 = ((float)bar.Minimum) / tag;
                 objA.Text = num2.ToString(ci);
             }
-            bar.Value = (int) Math.Min(num2 * tag, (float) bar.Maximum);
+            bar.Value = (int)Math.Min(num2 * tag, (float)bar.Maximum);
         }
 
         private void trackBar_Scroll(object sender, EventArgs e)
@@ -422,8 +423,8 @@
             {
                 box = this.textBox3;
             }
-            float tag = (float) objA.Tag;
-            box.Text = (((float) objA.Value) / tag).ToString(ci);
+            float tag = (float)objA.Tag;
+            box.Text = (((float)objA.Value) / tag).ToString(ci);
         }
     }
 }

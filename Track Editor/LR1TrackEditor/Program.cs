@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using System;
     using System.Diagnostics;
@@ -21,10 +21,10 @@
             }
             Console.Title = "Console window";
             bool flag = (args.Length > 0) && (args[0] == "-fullscreen");
-            Game1 game = new Game1();
+            GameView game = new GameView();
             try
             {
-                Form1 form = new Form1(game);
+                FormEditor form = new FormEditor(game);
                 game.setSurface(form.getPCTHandle(), form.getPCTSize(), false);
                 form.Show();
                 if (flag)
@@ -38,7 +38,7 @@
             }
             finally
             {
-                if (!ReferenceEquals(game, null))
+                if (game is object)
                 {
                     game.Dispose();
                 }

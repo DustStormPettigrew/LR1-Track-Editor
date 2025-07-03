@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1;
     using Microsoft.Xna.Framework;
@@ -41,7 +41,7 @@
             }
         }
 
-        public string getname() => 
+        public string getname() =>
             Path.GetFileName(this.filepath);
     }
 }

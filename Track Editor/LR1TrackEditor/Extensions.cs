@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1;
     using Microsoft.Xna.Framework;
@@ -6,46 +6,46 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public static class extensions
+    public static class Extensions
     {
-        private static Dictionary<byte, string> colorstring;
-        private static Dictionary<string, byte> colorbyte;
+        private static readonly Dictionary<byte, string> colorstring;
+        private static readonly Dictionary<string, byte> colorbyte;
 
-        static extensions()
+        static Extensions()
         {
             Dictionary<byte, string> dictionary = new Dictionary<byte, string> {
-                { 
+                {
                     0x2a,
                     "Red"
                 },
-                { 
+                {
                     0x2c,
                     "Blue"
                 },
-                { 
+                {
                     0x2d,
                     "Green"
                 },
-                { 
+                {
                     0x2b,
                     "Yellow"
                 }
             };
             colorstring = dictionary;
             Dictionary<string, byte> dictionary2 = new Dictionary<string, byte> {
-                { 
+                {
                     "Red",
                     0x2a
                 },
-                { 
+                {
                     "Blue",
                     0x2c
                 },
-                { 
+                {
                     "Green",
                     0x2d
                 },
-                { 
+                {
                     "Yellow",
                     0x2b
                 }
@@ -59,13 +59,13 @@
             input.Add(item);
         }
 
-        public static byte ColorByte(this Brick brick) => 
+        public static byte ColorByte(this Brick brick) =>
             colorbyte[brick.Color];
 
-        public static string ColorString(this PWB_ColorBrick brick) => 
+        public static string ColorString(this PWB_ColorBrick brick) =>
             colorstring[brick.Color];
 
-        public static float DistanceTo(this Plane plane, Vector3 point) => 
+        public static float DistanceTo(this Plane plane, Vector3 point) =>
             Vector3.Dot(plane.Normal, point) - plane.D;
 
         public static float? Intersects(this Ray ray, Plane plane, bool culling)
@@ -90,8 +90,9 @@
             return nullable;
         }
 
-        public static BoundingBox Transform(this BoundingBox input, Matrix transform) => 
-            new BoundingBox { 
+        public static BoundingBox Transform(this BoundingBox input, Matrix transform) =>
+            new BoundingBox
+            {
                 Min = Vector3.Transform(input.Min, transform),
                 Max = Vector3.Transform(input.Max, transform)
             };

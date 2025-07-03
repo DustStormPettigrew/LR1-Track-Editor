@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using System;
     using System.ComponentModel;
@@ -23,7 +23,7 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!(!disposing || ReferenceEquals(this.components, null)))
+            if (!(!disposing || this.components is null))
             {
                 this.components.Dispose();
             }
@@ -36,7 +36,7 @@
             this.versionLabel = new Label();
             this.linkLabel1 = new LinkLabel();
             this.pictureBox1 = new PictureBox();
-            ((ISupportInitialize) this.pictureBox1).BeginInit();
+            ((ISupportInitialize)this.pictureBox1).BeginInit();
             base.SuspendLayout();
             this.label1.AutoSize = true;
             this.label1.Font = new Font("Tahoma", 9f, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -76,7 +76,7 @@
             base.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             base.Name = "AboutForm";
             this.Text = "About";
-            ((ISupportInitialize) this.pictureBox1).EndInit();
+            ((ISupportInitialize)this.pictureBox1).EndInit();
             base.ResumeLayout(false);
             base.PerformLayout();
         }

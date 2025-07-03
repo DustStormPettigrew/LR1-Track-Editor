@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;

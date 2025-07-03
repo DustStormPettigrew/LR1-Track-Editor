@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1;
     using LibLR1.Utils;
@@ -13,18 +13,18 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
-    public class Game1 : Game
+    public class GameView : Game
     {
-        private GraphicsDeviceManager graphics;
+        private readonly GraphicsDeviceManager graphics;
         public BasicEffect basicEffect;
         private BasicEffect backgrnd;
         public RasterizerState rasterizerstate;
         public Vector3 cameraPosition;
         public VertexPTC[] skbmesh;
-        public WindowsGame2.Model pupbrick = null;
-        public WindowsGame2.Model puptrail = null;
-        public WindowsGame2.Model enhabrick = null;
-        public WindowsGame2.Model enhatrail = null;
+        public LR1TrackEditor.Model pupbrick = null;
+        public LR1TrackEditor.Model puptrail = null;
+        public LR1TrackEditor.Model enhabrick = null;
+        public LR1TrackEditor.Model enhatrail = null;
         public float brickrotation = 0f;
         public Dictionary<string, Material> corematerials = new Dictionary<string, Material>();
         public bool mouselock = false;
@@ -36,19 +36,19 @@
         public bool doDrawRRB = true;
         public bool doDrawSKB = true;
         public bool doDrawStaticObj = false;
-        public WindowsGame2.Model loadedmodel = null;
+        public LR1TrackEditor.Model loadedmodel = null;
         public string currentGDBfile = "";
         public string currentPWBfile = "";
         public string currentWDBfile = "";
         public Dictionary<string, Material> materials = new Dictionary<string, Material>();
-        public Dictionary<string, WindowsGame2.Model> models = new Dictionary<string, WindowsGame2.Model>();
+        public Dictionary<string, LR1TrackEditor.Model> models = new Dictionary<string, LR1TrackEditor.Model>();
         public string currentmatfile = "";
         public float Pitch = 0f;
         public float Yaw = 0f;
         public int height = 0;
         public int width = 0;
         public PWB pwb = null;
-        public WindowsGame2.SKB skb = null;
+        public LR1TrackEditor.SKB skb = null;
         public WDB wdb = null;
         public List<RRBFile> rrbs = new List<RRBFile>();
         public int editingRRBindex = -1;
@@ -57,34 +57,34 @@
         private IntPtr pctdrawsurface = IntPtr.Zero;
         private Size pctsize;
         private Size surfacesize;
-        private Form gameform;
-        public Form1 form;
-        private Dictionary<byte, string> brickcolors;
+        private readonly Form gameform;
+        public FormEditor form;
+        private readonly Dictionary<byte, string> brickcolors;
         public int editmode;
         public List<bool> SelectedBricksColored;
         public List<int> SelectedBrickIndices;
         public bool placing;
         public int placed;
-        public WindowsGame2.Model placingmodel;
+        public LR1TrackEditor.Model placingmodel;
         public Vector3? placingposition;
         public BoundingBox[] dragarrowhitboxes;
 
-        public Game1()
+        public GameView()
         {
             Dictionary<byte, string> dictionary = new Dictionary<byte, string> {
-                { 
+                {
                     0x2a,
                     "pbrickP"
                 },
-                { 
+                {
                     0x2c,
                     "pbrickS"
                 },
-                { 
+                {
                     0x2d,
                     "pbrickT"
                 },
-                { 
+                {
                     0x2b,
                     "pbrickM"
                 }
@@ -99,19 +99,19 @@
             this.placingmodel = null;
             this.placingposition = null;
             this.dragarrowhitboxes = new BoundingBox[3];
-            if (WindowsGame2.Settings.Default.NeedsUpdate)
+            if (LR1TrackEditor.Settings.Default.NeedsUpdate)
             {
-                WindowsGame2.Settings.Default.Upgrade();
-                WindowsGame2.Settings.Default.NeedsUpdate = false;
-                WindowsGame2.Settings.Default.Save();
+                LR1TrackEditor.Settings.Default.Upgrade();
+                LR1TrackEditor.Settings.Default.NeedsUpdate = false;
+                LR1TrackEditor.Settings.Default.Save();
             }
-            this.gameform = (Form) Control.FromHandle(base.Window.Handle);
+            this.gameform = (Form)Control.FromHandle(base.Window.Handle);
             base.IsMouseVisible = true;
             this.graphics = new GraphicsDeviceManager(this);
             base.Content.RootDirectory = "Content";
-            this.doTextures = WindowsGame2.Settings.Default.doTextures;
-            this.doVertexColors = WindowsGame2.Settings.Default.doVertexColors;
-            this.doDrawSKB = WindowsGame2.Settings.Default.doSkybox;
+            this.doTextures = LR1TrackEditor.Settings.Default.doTextures;
+            this.doVertexColors = LR1TrackEditor.Settings.Default.doVertexColors;
+            this.doDrawSKB = LR1TrackEditor.Settings.Default.doSkybox;
             this.graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(this.graphics_PreparingDeviceSettings);
             this.gameform.VisibleChanged += new EventHandler(this.gameform_VisibleChanged);
         }
@@ -123,7 +123,7 @@
             List<EffectPass>.Enumerator enumerator;
             this.basicEffect.World = Matrix.Identity;
             base.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Microsoft.Xna.Framework.Color color = new Microsoft.Xna.Framework.Color((int) WindowsGame2.Settings.Default.BackgroundColor.R, (int) WindowsGame2.Settings.Default.BackgroundColor.G, (int) WindowsGame2.Settings.Default.BackgroundColor.B);
+            Microsoft.Xna.Framework.Color color = new Microsoft.Xna.Framework.Color((int)LR1TrackEditor.Settings.Default.BackgroundColor.R, (int)LR1TrackEditor.Settings.Default.BackgroundColor.G, (int)LR1TrackEditor.Settings.Default.BackgroundColor.B);
             if ((this.skbmesh != null) && this.doDrawSKB)
             {
                 color = this.skbmesh[0].Color;
@@ -149,10 +149,7 @@
                 }
             }
             base.GraphicsDevice.RasterizerState = this.rasterizerstate;
-            if (!ReferenceEquals(this.loadedmodel, null))
-            {
-                this.loadedmodel.Draw(this, this.basicEffect);
-            }
+            this.loadedmodel?.Draw(this, this.basicEffect);
             if ((this.pwb != null) && this.doDrawPWB)
             {
                 Matrix[] transforms = new Matrix[this.pwb.ColorBricks.Count];
@@ -175,9 +172,10 @@
                                 this.enhabrick.DrawMultiple(this, this.basicEffect, transforms, mats);
                                 if (this.editmode == 1)
                                 {
-                                    if ((this.placing && WindowsGame2.Settings.Default.GhostPlacing) && (this.placingposition != null))
+                                    if ((this.placing && LR1TrackEditor.Settings.Default.GhostPlacing) && (this.placingposition != null))
                                     {
-                                        Material mat = new Material {
+                                        Material mat = new Material
+                                        {
                                             ambientcolor = this.corematerials["pbrickP"].ambientcolor,
                                             diffusecolor = this.corematerials["pbrickP"].diffusecolor,
                                             texture = this.corematerials["pbrickP"].texture,
@@ -263,7 +261,7 @@
                     }
                 }
             }
-            if (!ReferenceEquals(this.wdb, null))
+            if (!(this.wdb is null))
             {
                 flag = !this.doDrawStaticObj;
                 if (!flag)
@@ -296,7 +294,7 @@
 
         private void DrawMoveArrows(Vector3 pos)
         {
-            Vector3 vector = base.GraphicsDevice.Viewport.Unproject(new Vector3(((float) this.width) / 2f, ((float) this.height) / 2f, 0f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity);
+            Vector3 vector = base.GraphicsDevice.Viewport.Unproject(new Vector3(((float)this.width) / 2f, ((float)this.height) / 2f, 0f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity);
             float x = MathHelper.Min((pos - vector).Length(), 250f) * 0.2f;
             List<VertexPTC> list = new List<VertexPTC> {
                 new VertexPTC(pos, Microsoft.Xna.Framework.Color.Orange),
@@ -324,7 +322,7 @@
             list.Add(new VertexPTC(pos + new Vector3(-y, -y, x), new Microsoft.Xna.Framework.Color(0, 240, 0)));
             list.Add(new VertexPTC(pos + new Vector3(0f, 0f, x + (3f * y)), new Microsoft.Xna.Framework.Color(5, 0xff, 5)));
             this.dragarrowhitboxes[2] = new BoundingBox(pos + new Vector3(-y, -y, x), pos + new Vector3(y, y, x + (3f * y)));
-            short[] indexData = new short[] { 
+            short[] indexData = new short[] {
                 0, 1, 2, 0, 3, 1, 1, 3, 2, 2, 3, 0, 4, 5, 6, 4,
                 7, 5, 5, 7, 6, 6, 7, 4, 8, 9, 10, 8, 11, 9, 9, 11,
                 10, 10, 11, 8
@@ -348,7 +346,7 @@
             }
         }
 
-        public GraphicsDeviceManager getGraphics() => 
+        public GraphicsDeviceManager getGraphics() =>
             this.graphics;
 
         private void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -364,15 +362,19 @@
             this.height = base.GraphicsDevice.Viewport.Height;
             this.width = base.GraphicsDevice.Viewport.Width;
             this.rasterizerstate = RasterizerState.CullClockwise;
-            this.basicEffect = new BasicEffect(base.GraphicsDevice);
-            this.basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(WindowsGame2.Settings.Default.FoV), ((float) this.width) / ((float) this.height), 1f, WindowsGame2.Settings.Default.RenderDistance);
+            this.basicEffect = new BasicEffect(base.GraphicsDevice)
+            {
+                Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(LR1TrackEditor.Settings.Default.FoV), ((float)this.width) / ((float)this.height), 1f, LR1TrackEditor.Settings.Default.RenderDistance)
+            };
             this.cameraPosition = new Vector3(200f, -200f, 20f);
-            this.backgrnd = new BasicEffect(base.GraphicsDevice);
-            this.backgrnd.View = Matrix.CreateLookAt(new Vector3(0f, 4f, 2.5f), new Vector3(0f, 1f, 2.5f), new Vector3(0f, 0f, 1f));
-            this.backgrnd.Projection = Matrix.CreatePerspective(5f, 3.7f, 1f, 4f);
-            this.backgrnd.VertexColorEnabled = true;
-            this.backgrnd.TextureEnabled = false;
-            this.backgrnd.LightingEnabled = false;
+            this.backgrnd = new BasicEffect(base.GraphicsDevice)
+            {
+                View = Matrix.CreateLookAt(new Vector3(0f, 4f, 2.5f), new Vector3(0f, 1f, 2.5f), new Vector3(0f, 0f, 1f)),
+                Projection = Matrix.CreatePerspective(5f, 3.7f, 1f, 4f),
+                VertexColorEnabled = true,
+                TextureEnabled = false,
+                LightingEnabled = false
+            };
             base.Initialize();
         }
 
@@ -386,10 +388,7 @@
             this.pwb = null;
             this.wdb = null;
             this.rrbs.Clear();
-            if (!ReferenceEquals(this.loadedmodel, null))
-            {
-                this.loadedmodel.vertexbuffer.Dispose();
-            }
+            this.loadedmodel?.vertexbuffer.Dispose();
             if (this.gamedir == "")
             {
                 string str;
@@ -452,7 +451,7 @@
                     if (!(this.materials.ContainsKey(current.material) || set.Contains(current.material)))
                     {
                         set.Add(current.material);
-                        Utils.WriteLine("Material " + current.material + " not found", 14);
+                        Utils.WriteLine("Material " + current.material + " not found", ConsoleColor.Yellow);
                     }
                 }
             }
@@ -464,7 +463,7 @@
                 this.skbmesh = Utils.GenerateSKBMesh(new Microsoft.Xna.Framework.Color(gradient.Color1.R, gradient.Color1.G, gradient.Color1.B), new Microsoft.Xna.Framework.Color(gradient.Color2.R, gradient.Color2.G, gradient.Color2.B), new Microsoft.Xna.Framework.Color(gradient.Color3.R, gradient.Color3.G, gradient.Color3.B));
                 this.form.refreshSKB();
             }
-            if (!WindowsGame2.Settings.Default.AutoloadPowerup)
+            if (!LR1TrackEditor.Settings.Default.AutoloadPowerup)
             {
                 this.form.PWBToolStripItemChecked = false;
             }
@@ -477,7 +476,7 @@
                     this.form.refreshPWB(false);
                 }
             }
-            if (!WindowsGame2.Settings.Default.AutoloadObject)
+            if (!LR1TrackEditor.Settings.Default.AutoloadObject)
             {
                 this.form.staticObjectsToolStripItemChecked = false;
             }
@@ -517,7 +516,7 @@
                 this.currentmatfile = "";
                 this.loadModel(this.currentGDBfile);
             }
-            if (!((this.currentPWBfile == "") || WindowsGame2.Settings.Default.AutoloadPowerup))
+            if (!((this.currentPWBfile == "") || LR1TrackEditor.Settings.Default.AutoloadPowerup))
             {
                 this.pwb = Loader.loadPWB(this, this.currentPWBfile);
             }
@@ -542,12 +541,12 @@
 
         public void Select(int mousex, int mousey, bool multiselect)
         {
-            Vector3 position = base.GraphicsDevice.Viewport.Unproject(new Vector3((float) mousex, (float) mousey, 0f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity);
-            Vector3 direction = base.GraphicsDevice.Viewport.Unproject(new Vector3((float) mousex, (float) mousey, 1f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity) - position;
+            Vector3 position = base.GraphicsDevice.Viewport.Unproject(new Vector3((float)mousex, (float)mousey, 0f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity);
+            Vector3 direction = base.GraphicsDevice.Viewport.Unproject(new Vector3((float)mousex, (float)mousey, 1f), this.basicEffect.Projection, this.basicEffect.View, Matrix.Identity) - position;
             direction.Normalize();
             Ray input = new Ray(position, direction);
             float maxValue = float.MaxValue;
-            if ((this.editmode != 1) || ReferenceEquals(this.pwb, null))
+            if ((this.editmode != 1) || (this.pwb is null))
             {
                 if (this.editmode == 2)
                 {
@@ -576,7 +575,7 @@
                                 {
                                     flag1 = true;
                                 }
-                                else if (inputhandler.fillmode != 0)
+                                else if (InputHandler.fillmode != 0)
                                 {
                                     flag1 = false;
                                 }
@@ -676,7 +675,7 @@
                 this.height = presentationParameters.BackBufferHeight = this.surfacesize.Height;
                 this.graphics.GraphicsDevice.Reset(presentationParameters);
                 Mouse.WindowHandle = this.drawsurface;
-                this.basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(WindowsGame2.Settings.Default.FoV), ((float) this.width) / ((float) this.height), 1f, WindowsGame2.Settings.Default.RenderDistance);
+                this.basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(LR1TrackEditor.Settings.Default.FoV), ((float)this.width) / ((float)this.height), 1f, LR1TrackEditor.Settings.Default.RenderDistance);
             }
         }
 
@@ -710,16 +709,16 @@
                 base.IsMouseVisible = false;
                 this.mouselock = true;
             }
-            this.basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(WindowsGame2.Settings.Default.FoV), ((float) this.width) / ((float) this.height), 1f, WindowsGame2.Settings.Default.RenderDistance);
+            this.basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(LR1TrackEditor.Settings.Default.FoV), ((float)this.width) / ((float)this.height), 1f, LR1TrackEditor.Settings.Default.RenderDistance);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            inputhandler.handleinput(this);
+            InputHandler.handleinput(this);
             this.form.updateCameraPosition(this.cameraPosition);
-            Vector3 vector = new Vector3((float) (Math.Sin(3.1415926535897931 * this.Yaw) * Math.Cos(3.1415926535897931 * this.Pitch)), (float) (Math.Cos(3.1415926535897931 * this.Yaw) * Math.Cos(3.1415926535897931 * this.Pitch)), (float) Math.Sin(3.1415926535897931 * this.Pitch));
+            Vector3 vector = new Vector3((float)(Math.Sin(3.1415926535897931 * this.Yaw) * Math.Cos(3.1415926535897931 * this.Pitch)), (float)(Math.Cos(3.1415926535897931 * this.Yaw) * Math.Cos(3.1415926535897931 * this.Pitch)), (float)Math.Sin(3.1415926535897931 * this.Pitch));
             this.basicEffect.View = Matrix.CreateLookAt(this.cameraPosition, this.cameraPosition + vector, new Vector3(0f, 0f, 1f));
-            Vector3 vector2 = new Vector3(0f, 0f, -5f + (27f * ((float) Math.Min((double) this.Pitch, 0.18))));
+            Vector3 vector2 = new Vector3(0f, 0f, -5f + (27f * ((float)Math.Min((double)this.Pitch, 0.18))));
             this.backgrnd.View = Matrix.CreateLookAt(new Vector3(0f, 4f, 2.5f) + vector2, new Vector3(0f, 1f, 2.5f) + vector2, new Vector3(0f, 0f, 1f));
             this.brickrotation += 0.04f;
             if (this.brickrotation >= 2f)

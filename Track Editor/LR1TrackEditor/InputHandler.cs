@@ -1,4 +1,4 @@
-﻿namespace WindowsGame2
+﻿namespace LR1TrackEditor
 {
     using LibLR1.Utils;
     using Microsoft.Xna.Framework;
@@ -7,27 +7,27 @@
     using System;
     using System.Collections.Generic;
 
-    public static class inputhandler
+    public static class InputHandler
     {
         public static int cullmode = 1;
         public static int fillmode = 0;
         private static int lastscrollvalue = 0;
         private static bool holdingright = false;
         private static bool dragging = false;
-        private static Dictionary<Keys, bool> pressed = new Dictionary<Keys, bool>();
+        private static readonly Dictionary<Keys, bool> pressed = new Dictionary<Keys, bool>();
         private static bool clicked = false;
         private static bool justplaced = false;
-        private static float flyspeed = WindowsGame2.Settings.Default.FlySpeed;
-        public static Form1 form;
+        private static float flyspeed = LR1TrackEditor.Settings.Default.FlySpeed;
+        public static FormEditor form;
         private static Point dragstart = new Point();
         private static int dragaxis;
 
-        private static Vector3? CalculatePlaceLocation(Game1 game, int MouseX, int MouseY)
+        private static Vector3? CalculatePlaceLocation(GameView game, int MouseX, int MouseY)
         {
             Vector3? nullable2;
             Vector3? nullable4;
-            Vector3 position = game.GraphicsDevice.Viewport.Unproject(new Vector3((float) MouseX, (float) MouseY, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
-            Vector3 direction = game.GraphicsDevice.Viewport.Unproject(new Vector3((float) MouseX, (float) MouseY, 1f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity) - position;
+            Vector3 position = game.GraphicsDevice.Viewport.Unproject(new Vector3((float)MouseX, (float)MouseY, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
+            Vector3 direction = game.GraphicsDevice.Viewport.Unproject(new Vector3((float)MouseX, (float)MouseY, 1f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity) - position;
             direction.Normalize();
             Ray input = new Ray(position, direction);
             float? nullable = Utils.distanceToTriangle(input);
@@ -80,7 +80,7 @@
             return nullable2;
         }
 
-        private static void Drag(Game1 game, float MouseX, float MouseY)
+        private static void Drag(GameView game, float MouseX, float MouseY)
         {
             Plane plane;
             Vector3 vector5;
@@ -88,7 +88,7 @@
             int num = game.SelectedBrickIndices.Count - 1;
             Vector3 vector = game.GraphicsDevice.Viewport.Unproject(new Vector3(MouseX, MouseY, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
             Vector3 vector2 = game.GraphicsDevice.Viewport.Unproject(new Vector3(MouseX, MouseY, 1f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
-            Vector3 vector3 = game.GraphicsDevice.Viewport.Unproject(new Vector3(((float) game.width) / 2f, ((float) game.height) / 2f, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
+            Vector3 vector3 = game.GraphicsDevice.Viewport.Unproject(new Vector3(((float)game.width) / 2f, ((float)game.height) / 2f, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
             if ((dragaxis == 1) || (dragaxis == 2))
             {
                 plane = new Plane(vector, vector2, vector + new Vector3(0f, 0f, 1f));
@@ -157,7 +157,7 @@
             }
         }
 
-        public static void handleinput(Game1 game)
+        public static void handleinput(GameView game)
         {
             if (!game.IsActive || (!form.ContainsFocus && !game.gameFormFocused))
             {
@@ -211,7 +211,7 @@
                         if (state2.ScrollWheelValue != lastscrollvalue)
                         {
                             int num = state2.ScrollWheelValue - lastscrollvalue;
-                            flyspeed += ((float) num) / 1000f;
+                            flyspeed += ((float)num) / 1000f;
                             if (flyspeed < 0f)
                             {
                                 flyspeed = 0f;
@@ -248,8 +248,8 @@
                                 }
                                 else
                                 {
-                                    Vector3 position = game.GraphicsDevice.Viewport.Unproject(new Vector3((float) state2.X, (float) state2.Y, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
-                                    Vector3 direction = game.GraphicsDevice.Viewport.Unproject(new Vector3((float) state2.X, (float) state2.Y, 1f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity) - position;
+                                    Vector3 position = game.GraphicsDevice.Viewport.Unproject(new Vector3((float)state2.X, (float)state2.Y, 0f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity);
+                                    Vector3 direction = game.GraphicsDevice.Viewport.Unproject(new Vector3((float)state2.X, (float)state2.Y, 1f), game.basicEffect.Projection, game.basicEffect.View, Matrix.Identity) - position;
                                     direction.Normalize();
                                     Ray ray = new Ray(position, direction);
                                     float maxValue = float.MaxValue;
@@ -266,7 +266,7 @@
                                     }
                                     if (((nullable = ray.Intersects(game.dragarrowhitboxes[2])) != null) && (nullable.Value < maxValue))
                                     {
-                                        maxValue = nullable.Value;
+                                        //maxValue = nullable.Value;
                                         dragaxis = 3;
                                     }
                                 }
@@ -278,7 +278,7 @@
                             }
                             if (dragging && ((game.editmode == 1) && (game.SelectedBrickIndices.Count > 0)))
                             {
-                                Drag(game, (float) state2.X, (float) state2.Y);
+                                Drag(game, (float)state2.X, (float)state2.Y);
                             }
                         }
                         if ((state2.LeftButton == ButtonState.Released) && clicked)
@@ -298,26 +298,26 @@
                             dragging = false;
                             clicked = false;
                         }
-                        if (game.placing && WindowsGame2.Settings.Default.GhostPlacing)
+                        if (game.placing && LR1TrackEditor.Settings.Default.GhostPlacing)
                         {
                             game.placingposition = CalculatePlaceLocation(game, state2.X, state2.Y);
                         }
                     }
                     if (state.IsKeyDown(Keys.W))
                     {
-                        game.cameraPosition += new Vector3(((float) Math.Sin(game.Yaw * 3.1415926535897931)) * flyspeed, ((float) Math.Cos(game.Yaw * 3.1415926535897931)) * flyspeed, 0f);
+                        game.cameraPosition += new Vector3(((float)Math.Sin(game.Yaw * 3.1415926535897931)) * flyspeed, ((float)Math.Cos(game.Yaw * 3.1415926535897931)) * flyspeed, 0f);
                     }
                     if (state.IsKeyDown(Keys.S))
                     {
-                        game.cameraPosition -= new Vector3(((float) Math.Sin(game.Yaw * 3.1415926535897931)) * flyspeed, ((float) Math.Cos(game.Yaw * 3.1415926535897931)) * flyspeed, 0f);
+                        game.cameraPosition -= new Vector3(((float)Math.Sin(game.Yaw * 3.1415926535897931)) * flyspeed, ((float)Math.Cos(game.Yaw * 3.1415926535897931)) * flyspeed, 0f);
                     }
                     if (state.IsKeyDown(Keys.A))
                     {
-                        game.cameraPosition += new Vector3(((float) Math.Sin((game.Yaw * 3.1415926535897931) - 1.5707963705062866)) * flyspeed, ((float) Math.Cos((game.Yaw * 3.1415926535897931) - 1.5707963705062866)) * flyspeed, 0f);
+                        game.cameraPosition += new Vector3(((float)Math.Sin((game.Yaw * 3.1415926535897931) - 1.5707963705062866)) * flyspeed, ((float)Math.Cos((game.Yaw * 3.1415926535897931) - 1.5707963705062866)) * flyspeed, 0f);
                     }
                     if (state.IsKeyDown(Keys.D))
                     {
-                        game.cameraPosition += new Vector3(((float) Math.Sin((game.Yaw * 3.1415926535897931) + 1.5707963705062866)) * flyspeed, ((float) Math.Cos((game.Yaw * 3.1415926535897931) + 1.5707963705062866)) * flyspeed, 0f);
+                        game.cameraPosition += new Vector3(((float)Math.Sin((game.Yaw * 3.1415926535897931) + 1.5707963705062866)) * flyspeed, ((float)Math.Cos((game.Yaw * 3.1415926535897931) + 1.5707963705062866)) * flyspeed, 0f);
                     }
                     if (state.IsKeyDown(Keys.Space) || state.IsKeyDown(Keys.E))
                     {
@@ -327,7 +327,7 @@
                     {
                         game.cameraPosition -= new Vector3(0f, 0f, 1f * flyspeed);
                     }
-                    if (!((state.IsKeyDown(Keys.LeftAlt) || state.IsKeyDown(Keys.RightAlt)) ? !isKeyPressed(Keys.Enter) : true))
+                    if (!(!state.IsKeyDown(Keys.LeftAlt) && !state.IsKeyDown(Keys.RightAlt) || !isKeyPressed(Keys.Enter)))
                     {
                         game.ToggleFullscreen();
                     }
@@ -347,11 +347,11 @@
                         game.doVertexColors = !game.doVertexColors;
                         form.doVertexColorsChanged(game.doVertexColors);
                     }
-                    if (!((state.IsKeyDown(Keys.LeftControl) || state.IsKeyDown(Keys.RightControl)) ? !isKeyPressed(Keys.O) : true) && form.OpenWarning())
+                    if (!(!state.IsKeyDown(Keys.LeftControl) && !state.IsKeyDown(Keys.RightControl) || !isKeyPressed(Keys.O)) && form.OpenWarning())
                     {
                         Utils.OpenFileDialog(1);
                     }
-                    if (!((state.IsKeyDown(Keys.LeftControl) || state.IsKeyDown(Keys.RightControl)) ? !isKeyPressed(Keys.R) : true))
+                    if (!(!state.IsKeyDown(Keys.LeftControl) && !state.IsKeyDown(Keys.RightControl) || !isKeyPressed(Keys.R)))
                     {
                         game.Reload();
                     }
@@ -362,9 +362,10 @@
                         {
                             cullmode = 0;
                         }
-                        state3 = new RasterizerState {
-                            CullMode = (CullMode) cullmode,
-                            FillMode = (FillMode) fillmode
+                        state3 = new RasterizerState
+                        {
+                            CullMode = (CullMode)cullmode,
+                            FillMode = (FillMode)fillmode
                         };
                         game.rasterizerstate = state3;
                         Console.WriteLine("Cullmode=" + state3.CullMode.ToString());
@@ -376,9 +377,10 @@
                         {
                             fillmode = 0;
                         }
-                        state3 = new RasterizerState {
-                            CullMode = (CullMode) cullmode,
-                            FillMode = (FillMode) fillmode
+                        state3 = new RasterizerState
+                        {
+                            CullMode = (CullMode)cullmode,
+                            FillMode = (FillMode)fillmode
                         };
                         game.rasterizerstate = state3;
                         Console.WriteLine("Fillmode=" + state3.FillMode.ToString());
@@ -395,7 +397,7 @@
         private static bool isKeyPressed(Keys key)
         {
             bool flag;
-            if (!(!Keyboard.GetState().IsKeyDown(key) ? true : (!pressed.ContainsKey(key) ? false : pressed[key])))
+            if (!(!Keyboard.GetState().IsKeyDown(key) || (pressed.ContainsKey(key) && pressed[key])))
             {
                 pressed[key] = true;
                 flag = true;
